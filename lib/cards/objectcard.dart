@@ -1,39 +1,33 @@
 import 'package:flutter/material.dart';
 
 class ProductTile extends StatelessWidget {
-  const ProductTile({super.key});
+  final String productName;
+  final String imagePath;
+  final color;
+  const ProductTile({super.key, required this.productName, required this.imagePath, this.color});
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Container(
-        padding: EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          color: Colors.black54,
-        ),
-        child: Column(
-          //crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: Image.asset(
-                  'lib/imgs/bed.png',
-                  height: 67,
-                  fit: BoxFit.fill,
-                )),
-            SizedBox(
-              height: 20,
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left:8.0),
+          child: Container(
+            height: 80,
+            padding: EdgeInsets.all(1),
+            decoration: BoxDecoration(
+              color: Colors.grey[900],
+              borderRadius: BorderRadius.circular(20),
+              //boxShadow: [
+              // BoxShadow(color: Colors.grey.shade800,blurRadius: 10)
+              //]
             ),
-            Text(
-              'Bed',
-              style: TextStyle(fontSize: 20),
-            )
-          ],
+            child: Image.asset(imagePath),
+          ),
         ),
-        width: 110,
-      ),
+        SizedBox(height: 5,),
+        Text(productName,style: TextStyle(fontWeight: FontWeight.w500,fontSize: 18,color: Colors.grey),)
+      ],
     );
   }
 }
