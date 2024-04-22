@@ -1,8 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:marketit/cards/categories.dart';
+import 'package:marketit/cards/goods.dart';
 import 'package:marketit/cards/goodtile.dart';
 import 'package:marketit/cards/objectcard.dart';
+import 'package:marketit/pages/Bed.dart';
+import 'package:marketit/pages/TVs.dart';
+import 'package:marketit/pages/displaypage.dart';
+import 'package:marketit/pages/messagespage.dart';
+import 'package:marketit/pages/notificationspage.dart';
+import 'package:marketit/pages/profilepage.dart';
+import 'package:marketit/pages/savedpage.dart';
+import 'package:marketit/pages/sell_page.dart';
+
+import 'Computers.dart';
+import 'Furniture.dart';
+import 'Gas.dart';
+import 'Phones.dart';
+import 'Stereo.dart';
+import 'mydrawer.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -12,33 +28,51 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<GoodTile> cardList = [
-    GoodTile(
-        title: 'Macbook pro 2019',
-        briefDescription: 'i5/16gb/512gb',
-        Price: '40,000',
-        imagePath: 'lib/imgs/laptop.jpg'),
-    GoodTile(
+  List goodList = [
+    Good(
+      title: 'Macbook pro 2019',
+      briefDescription: 'i5/16gb/512gb',
+      Price: '40,000',
+      imagePath: 'lib/imgs/laptop.jpg',
+    ),
+    Good(
         title: 'Total Gas',
         briefDescription: 'half full',
         Price: '2000',
         imagePath: 'lib/imgs/gas.jpg'),
-    GoodTile(
+    Good(
         title: '3.5x6 Bed',
         briefDescription: 'No screeches',
         Price: '2400',
         imagePath: 'lib/imgs/bed.jpg'),
-    GoodTile(
+    Good(
         title: 'Sony Tv',
         briefDescription: '32 inch LED',
         Price: '69,000',
         imagePath: 'lib/imgs/tv.jpg'),
-    GoodTile(
+    Good(
         title: 'Home Theatre',
         briefDescription: 'Stereo Speakers',
         Price: '30,000',
         imagePath: 'lib/imgs/speakers.jpg')
   ];
+
+  void navigatetoGoodDetails(int index) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => DisplayPage(
+                  good: goodList[index],
+                )));
+  }
+
+  void goToProfilePage() {
+    Navigator.pop(context);
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => ProfilePage()));
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -47,21 +81,16 @@ class _HomePageState extends State<HomePage> {
         appBar: AppBar(
           elevation: 0,
           backgroundColor: Colors.transparent,
-          leading: Icon(Icons.menu),
-          actions: [
-            Padding(
-              padding: const EdgeInsets.only(right: 25.0),
-              child: Icon(Icons.person),
-            )
-          ],
+          // leading: Icon(Icons.menu),
+          // actions: [
+          //   Padding(
+          //    padding: const EdgeInsets.only(right: 25.0),
+          //     child: Icon(Icons.person),
+          //   )
+          //],
         ),
-        bottomNavigationBar: BottomNavigationBar(
-          items: [
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: ''),
-            BottomNavigationBarItem(icon: Icon(Icons.favorite), label: ''),
-            BottomNavigationBarItem(icon: Icon(Icons.notifications), label: ''),
-          ],
-        ),
+        drawer: MyDrawer(onProfileTap: goToProfilePage),
+
         body: SingleChildScrollView(
           child: Container(
             child: Column(
@@ -113,29 +142,102 @@ class _HomePageState extends State<HomePage> {
                   scrollDirection: Axis.horizontal,
                   child: Row(
                     children: [
-                      ProductTile(
-                          productName: 'Bed', imagePath: 'lib/imgs/bed.png'),
-                      ProductTile(
-                          productName: 'Computers',
-                          imagePath: 'lib/imgs/laptop.png'),
-                      ProductTile(
-                          productName: 'Stereos',
-                          imagePath: 'lib/imgs/loudspeaker-box.png'),
-                      ProductTile(
-                          productName: 'Mattress',
-                          imagePath: 'lib/imgs/air-mattress.png'),
-                      ProductTile(
-                          productName: 'Phones',
-                          imagePath: 'lib/imgs/mobile-app.png'),
-                      ProductTile(
-                          productName: 'TVs',
-                          imagePath: 'lib/imgs/television.png'),
-                      ProductTile(
-                          productName: 'Gas Cylinder',
-                          imagePath: 'lib/imgs/gas-stove.png'),
-                      ProductTile(
-                          productName: 'Furniture',
-                          imagePath: 'lib/imgs/armchair.png'),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const BedPage()),
+                          );
+                        },
+                        child: ProductTile(
+                          productName: 'Beds',
+                          imagePath: 'lib/imgs/bed.png', onTap: () {  },
+                        ),
+                      ),
+
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const ComputersPage()),
+                          );
+                        },
+                        child: ProductTile(
+                            productName: 'Computers',
+                            imagePath: 'lib/imgs/laptop.png', onTap: () { Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                            builder: (context) => const BedPage())); },),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const StereoPage()),
+                          );
+                        },
+                        child: ProductTile(
+                            productName: 'Stereos',
+                            imagePath: 'lib/imgs/loudspeaker-box.png', onTap: () { Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                            builder: (context) => const BedPage()) );},),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const BedPage()),
+                          );
+                        },
+                        child: ProductTile(
+                            productName: 'Mattress',
+                            imagePath: 'lib/imgs/air-mattress.png', onTap: () {  },),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const PhonesPage()),
+                          );
+                        },
+                        child: ProductTile(
+                            productName: 'Phones',
+                            imagePath: 'lib/imgs/mobile-app.png', onTap: () {  },),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const TvPage()),
+                          );
+                        },
+                        child: ProductTile(
+                            productName: 'TVs',
+                            imagePath: 'lib/imgs/television.png', onTap: () {  },),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const GasPage()),
+                          );
+                        },
+                        child: ProductTile(
+                            productName: 'Gas Cylinder',
+                            imagePath: 'lib/imgs/gas-stove.png', onTap: () {  },),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const FurniturePage()),
+                          );
+                        },
+                        child: ProductTile(
+                            productName: 'Furniture',
+                            imagePath: 'lib/imgs/armchair.png', onTap: () {  },),
+                      ),
                     ],
                   ),
                 ),
@@ -159,69 +261,16 @@ class _HomePageState extends State<HomePage> {
                 GridView.builder(
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
-                    itemCount: cardList.length,
+                    itemCount: goodList.length,
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
                         crossAxisSpacing: 2,
                         mainAxisSpacing: 2,
                         mainAxisExtent: 200),
-                    itemBuilder: (BuildContext, int index) {
-                      return Padding(
-                        padding: const EdgeInsets.only(left: 5.0, bottom: 5),
-                        child: Container(
-                         // padding: EdgeInsets.all(5),
-                          height: 300,
-                          width: 200,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            color: Colors.black54,
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(12),
-                                child: AspectRatio(
-                                    aspectRatio: 16 / 9,
-                                    child: Image.asset(
-                                        fit: BoxFit.cover,
-
-                                        alignment: FractionalOffset.center,
-                                        cardList[index].imagePath)),
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Text(
-                                cardList[index].title,
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                              SizedBox(
-                                height: 4,
-                              ),
-                              Text(
-                                cardList[index].briefDescription,
-                                style: TextStyle(color: Colors.grey[700]),
-                              ),
-                              SizedBox(
-                                height: 15,
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    'Ksh ' + cardList[index].Price,
-                                    style: TextStyle(fontSize: 13),
-                                  ),
-                                  Icon(Icons.favorite_border)
-                                ],
-                              )
-                            ],
-                          ),
-                        ),
-                      );
-                    })
+                    itemBuilder: (context, index) => GoodTile(
+                          good: goodList[index],
+                          onTap: () => navigatetoGoodDetails(index),
+                        ))
               ],
             ),
           ),
