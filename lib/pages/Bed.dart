@@ -57,19 +57,6 @@ class _BedPageState extends State<BedPage> {
       appBar: AppBar(
         title: Center(child: Text('B E D')),
       ),
-      body: GridView.builder(
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          itemCount: goodList.length,
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 2,
-              mainAxisSpacing: 2,
-              mainAxisExtent: 200),
-          itemBuilder: (context, index) => GoodTile(
-            good: goodList[index],
-            onTap: () => navigatetoGoodDetails(context ,index),
-          )),
     );
   }
 }

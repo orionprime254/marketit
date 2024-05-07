@@ -1,12 +1,16 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:marketit/cards/drawer_list_tile.dart';
 
 class MyDrawer extends StatelessWidget {
   final void Function()? onProfileTap;
- // final void Function()? onSignOut;
+  //final void Function()? onSignOut;
   const MyDrawer({super.key, required this.onProfileTap,
-    //required this.onSignOut
+   // required this.onSignOut
   });
+  void signUserOut(){
+    FirebaseAuth.instance.signOut();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,9 +41,10 @@ class MyDrawer extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(bottom: 28.0),
             child: DrawerListTile(
+
               icon: Icons.logout,
               text: 'L O G O U T',
-              onTap: () => Navigator.pop(context),
+              onTap: signUserOut
             ),
           ),
         ],

@@ -1,3 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:marketit/pages/savedpage.dart';
 import 'package:marketit/pages/sell_page.dart';
@@ -9,11 +11,14 @@ import 'notificationspage.dart';
 class BottomNavBar extends StatefulWidget {
   const BottomNavBar({super.key});
 
+
   @override
   State<BottomNavBar> createState() => _BottomNavBarState();
 }
 
+
 class _BottomNavBarState extends State<BottomNavBar> {
+  final currentUser = FirebaseAuth.instance.currentUser!;
   int _currentPage = 0;
   final List<Widget> _pages = [
     HomePage(),
