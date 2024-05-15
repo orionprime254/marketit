@@ -12,42 +12,7 @@ class BedPage extends StatefulWidget {
 
   State<BedPage> createState() => _BedPageState();
 }
-List goodList = [
-  Good(
-    title: 'Macbook pro 2019',
-    briefDescription: 'i5/16gb/512gb',
-    Price: '40,000',
-    imagePath: 'lib/imgs/laptop.jpg',
-  ),
-  Good(
-      title: 'Total Gas',
-      briefDescription: 'half full',
-      Price: '2000',
-      imagePath: 'lib/imgs/gas.jpg'),
-  Good(
-      title: '3.5x6 Bed',
-      briefDescription: 'No screeches',
-      Price: '2400',
-      imagePath: 'lib/imgs/bed.jpg'),
-  Good(
-      title: 'Sony Tv',
-      briefDescription: '32 inch LED',
-      Price: '69,000',
-      imagePath: 'lib/imgs/tv.jpg'),
-  Good(
-      title: 'Home Theatre',
-      briefDescription: 'Stereo Speakers',
-      Price: '30,000',
-      imagePath: 'lib/imgs/speakers.jpg')
-];
-void navigatetoGoodDetails(BuildContext context,int index) {
-  Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) => DisplayPage(
-            good: goodList[index],
-          )));
-}
+
 
 class _BedPageState extends State<BedPage> {
   @override

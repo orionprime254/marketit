@@ -1,33 +1,41 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:marketit/pages/homepage.dart';
+import 'package:marketit/pages/messagespage.dart';
+import 'package:marketit/pages/notificationspage.dart';
 import 'package:marketit/pages/savedpage.dart';
 import 'package:marketit/pages/sell_page.dart';
 
-import 'homepage.dart';
-import 'messagespage.dart';
-import 'notificationspage.dart';
-
 class BottomNavBar extends StatefulWidget {
-  const BottomNavBar({super.key});
-
-
   @override
   State<BottomNavBar> createState() => _BottomNavBarState();
 }
 
-
 class _BottomNavBarState extends State<BottomNavBar> {
-  final currentUser = FirebaseAuth.instance.currentUser!;
+  late final User? currentUser;
   int _currentPage = 0;
-  final List<Widget> _pages = [
-    HomePage(),
-    SavedPage(),
-    SellPage(),
-    NotificationPage(),
-    MessagePage()
+  late final List<Widget> _pages;
 
-  ];
+  @override
+  void initState() {
+    super.initState();
+    initializeCurrentUser();
+    _initializePages();
+  }
+
+  void initializeCurrentUser() {
+    currentUser = FirebaseAuth.instance.currentUser;
+  }
+
+  void _initializePages() {
+    _pages = [
+      HomePage(),
+      SavedPage(wishlist: [],),
+      SellPage(),
+      NotificationPage(),
+      MessagePage(),
+    ];
+  }
 
   void _onTabTapped(int index) {
     setState(() {
@@ -37,33 +45,37 @@ class _BottomNavBarState extends State<BottomNavBar> {
 
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
+    return Scaffold(
       body: _pages[_currentPage],
-      bottomNavigationBar:
-      BottomNavigationBar(
-      currentIndex: _currentPage,
-      onTap: _onTabTapped,
-      items: [
-        BottomNavigationBarItem(
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentPage,
+        onTap: _onTabTapped,
+        items: [
+          BottomNavigationBarItem(
             icon: Icon(
               Icons.home,
               color: Colors.orange,
             ),
-            label: ''),
-        BottomNavigationBarItem(
-            icon: Icon(Icons.favorite, color: Colors.orange), label: ''),
-        BottomNavigationBarItem(
-            icon: Icon(Icons.add, color: Colors.orange), label: ''),
-        BottomNavigationBarItem(
+            label: '',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.favorite, color: Colors.orange),
+            label: '',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.add, color: Colors.orange),
+            label: '',
+          ),
+          BottomNavigationBarItem(
             icon: Icon(Icons.notifications, color: Colors.orange),
-            label: ''),
-        BottomNavigationBarItem(
+            label: '',
+          ),
+          BottomNavigationBarItem(
             icon: Icon(Icons.message_sharp, color: Colors.orange),
-            label: ''),
-        //  BottomNavigationBarItem(icon: Icon(Icons.person,color: Colors.orange), label: ''),
-      ],
-    )
-    ,
+            label: '',
+          ),
+        ],
+      ),
     );
   }
 }

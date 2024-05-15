@@ -12,6 +12,7 @@ import 'package:marketit/pages/notificationspage.dart';
 import 'package:marketit/pages/profilepage.dart';
 import 'package:marketit/pages/savedpage.dart';
 import 'package:marketit/pages/sell_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'Computers.dart';
 import 'Furniture.dart';
@@ -31,14 +32,29 @@ class _HomePageState extends State<HomePage> {
   final CollectionReference _items =
       FirebaseFirestore.instance.collection('uploads');
   String imageUrl = '';
+  List<String> wishlist = [];
 
-  void navigatetoGoodDetails(int index) {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => DisplayPage(
-                  good: goodList[index],
-                )));
+  void toggleWishlist(String itemId) {
+    setState(() {
+      if (wishlist.contains(itemId)) {
+        wishlist.remove(itemId); // Item already in wishlist, remove it
+      } else {
+        wishlist.add(itemId); // Item not in wishlist, add it
+      }
+    });
+    saveWishlist();
+
+  }
+  void loadWishList() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      wishlist = prefs.getStringList('wishlist') ?? [];
+    });
+  }
+
+  void saveWishlist() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setStringList('wishlist', wishlist);
   }
 
   void goToProfilePage() {
@@ -53,6 +69,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    loadWishList();
     _stream = FirebaseFirestore.instance.collection('uploads').snapshots();
   }
 
@@ -290,8 +307,21 @@ class _HomePageState extends State<HomePage> {
                   ),
                   itemBuilder: (BuildContext context, int index) {
                     Map thisItem = itemsFromFirestore[index];
+                    String itemId = documents[index].id;
                     return GestureDetector(
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => DisplayPage(
+                              imageUrl: thisItem['image'],
+                              name: thisItem['Title'],
+                              price: thisItem['Price'].toString(),
+                              description: thisItem['Description'],
+                            ),
+                          ),
+                        );
+                      },
                       child: Container(
                         height: 300,
                         width: 200,
@@ -336,10 +366,19 @@ class _HomePageState extends State<HomePage> {
                                     style: TextStyle(fontSize: 13),
                                   ),
                                 ),
-
                                 Padding(
                                   padding: const EdgeInsets.only(right: 10.0),
-                                  child: Icon(Icons.favorite_border),
+                                  child: IconButton(
+                                    onPressed: () {
+                                      toggleWishlist(itemId);
+                                    },
+                                    icon: wishlist.contains(itemId)
+                                        ? Icon(
+                                            Icons.favorite,
+                                            color: Colors.red,
+                                          )
+                                        : Icon(Icons.favorite_border),
+                                  ),
                                 )
                               ],
                             ),

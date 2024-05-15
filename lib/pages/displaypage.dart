@@ -1,22 +1,21 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:marketit/cards/goodtile.dart';
 
 import '../cards/goods.dart';
 
-class DisplayPage extends StatefulWidget {
-  final Good good;
+class DisplayPage extends StatelessWidget {
+  final String imageUrl;
+  final String name;
+  final String price;
+  final String description;
 
   const DisplayPage({
-    super.key,
-    required this.good,
+    super.key, required this.imageUrl, required this.name, required this.price, required this.description,
+
     //required this.goodTile
   });
 
-  @override
-  State<DisplayPage> createState() => _DisplayPageState();
-}
-
-class _DisplayPageState extends State<DisplayPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,13 +25,12 @@ class _DisplayPageState extends State<DisplayPage> {
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
         children: [
           Expanded(
               child: ListView(
             children: [
-              Image.asset(
-                widget.good.imagePath,
+              Image.network(
+               imageUrl,
                 height: 400,
                 fit: BoxFit.contain,
               ),
@@ -45,14 +43,19 @@ class _DisplayPageState extends State<DisplayPage> {
                   Padding(
                     padding: const EdgeInsets.only(left: 20.0),
                     child: Text(
-                      widget.good.title,
+                     name,
                       style:
                           TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(right: 25.0),
-                    child: Icon(Icons.favorite_border),
+                  GestureDetector(
+                    onTap: (){
+                      
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 25.0),
+                      child: Icon(Icons.favorite_border),
+                    ),
                   )
                 ],
               ),
@@ -62,27 +65,25 @@ class _DisplayPageState extends State<DisplayPage> {
               Padding(
                 padding: const EdgeInsets.only(left: 25.0),
                 child: Text(
-                  '\Ksh ' + widget.good.Price,
+                  '\Ksh '
+                      + price.toString(),
                   style: TextStyle(
                       color: Colors.grey[100],
                       fontWeight: FontWeight.w400,
-                      fontSize: 25),
+                    fontSize: 25),
                 ),
               ),
               //  SizedBox(
               //    height: 20,
               //  ),
-              Padding(
-                padding: const EdgeInsets.only(left: 25.0),
-                child: Text(widget.good.briefDescription),
-              ),
+
               SizedBox(
                 height: 10,
               ),
               Padding(
                 padding: const EdgeInsets.all(25.0),
                 child: Text(
-                  'Lorem ipsum dolor sit amet. Ad obcaecati quia est sint odio qui quaerat dolorum. Vel maiores sunt sit neque ipsam et sunt reprehenderit ea corporis sunt nam ullam eveniet est vitae doloremque. Sit fuga animi non inventore voluptate cum quasi doloribus et dolore ipsa. Est reprehenderit animi sed quod minus quo consequatur molestiae aut ducimus quae qui atque quidem est doloremque pariatur.',
+                  description,
                   style: TextStyle(height: 2),
                 ),
               ),
@@ -92,16 +93,18 @@ class _DisplayPageState extends State<DisplayPage> {
                   //height: 75,
 
                   decoration: BoxDecoration(
-                    color: Colors.orange,
-                    borderRadius: BorderRadius.circular(30)
-                  ),
+                      color: Colors.orange,
+                      borderRadius: BorderRadius.circular(30)),
                   child: Padding(
                     padding: const EdgeInsets.all(20.0),
                     child: Center(
-                      child: Text('0793997999',style: TextStyle(
-                    fontSize: 22,color: Colors.black,fontWeight: FontWeight.bold
-
-                      ),),
+                      child: Text(
+                        '0793997999',
+                        style: TextStyle(
+                            fontSize: 22,
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold),
+                      ),
                     ),
                   ),
                 ),
