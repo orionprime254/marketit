@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:marketit/cards/categories.dart';
@@ -334,12 +335,12 @@ class _HomePageState extends State<HomePage> {
                             ClipRRect(
                               child: AspectRatio(
                                 aspectRatio: 16 / 9,
-                                child: Image.network(
-                                  "${thisItem['image']}",
+                                child: CachedNetworkImage(
+                                  errorWidget: (context, url, error) => Icon(Icons.error),
                                   height: 100,
                                   width: double.infinity,
                                   fit: BoxFit.cover,
-                                  alignment: FractionalOffset.center,
+                                  alignment: FractionalOffset.center, imageUrl:  "${thisItem['image']}",
                                 ),
                               ),
                             ),

@@ -86,7 +86,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   StreamBuilder<QuerySnapshot>(
                     stream: FirebaseFirestore.instance
                         .collection("uploads")
-                        .where("userId", isEqualTo: currentUser!.uid)
+                        .where("userId", isEqualTo: currentUser!.email)
                         .snapshots(),
                     builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
@@ -133,7 +133,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                             item['Title'],
                                             style: TextStyle(fontWeight: FontWeight.bold),
                                           ),
-                                          Text(item['Description']),
+                                          //Text(item['Description']),
                                           Text('Ksh  ${item['price']}'),
                                         ],
                                       ),
