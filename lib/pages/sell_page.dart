@@ -40,7 +40,8 @@ class _SellPageState extends State<SellPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Center(child: Text('S E L L')),
+        centerTitle:true,
+        title: Text('S E L L'),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
@@ -64,7 +65,8 @@ class _SellPageState extends State<SellPage> {
                 'Gas',
                 'Furniture',
                 'Clothes',
-                'Services'
+                'Services',
+                'Food'
               ].map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
@@ -74,22 +76,22 @@ class _SellPageState extends State<SellPage> {
             ),
             SizedBox(height: 20,),
             _buildCategorySpecificField(),
-            const SizedBox(height: 20),
-            DropdownButtonFormField<String>(
-              decoration: const InputDecoration(labelText: 'Condition'),
-              value: _selectedCondition,
-              onChanged: (String? newValue) {
-                setState(() {
-                  _selectedCondition = newValue!;
-                });
-              },
-              items: ['New', 'Used'].map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-            ),
+           // const SizedBox(height: 20),
+            // DropdownButtonFormField<String>(
+            //   decoration: const InputDecoration(labelText: 'Condition'),
+            //   value: _selectedCondition,
+            //   onChanged: (String? newValue) {
+            //     setState(() {
+            //       _selectedCondition = newValue!;
+            //     });
+            //   },
+            //   items: ['New', 'Used'].map<DropdownMenuItem<String>>((String value) {
+            //     return DropdownMenuItem<String>(
+            //       value: value,
+            //       child: Text(value),
+            //     );
+            //   }).toList(),
+            // ),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
@@ -240,6 +242,19 @@ class _SellPageState extends State<SellPage> {
           child: TextFormField(
             decoration: InputDecoration(
               labelText: 'Screen size (inches)',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            keyboardType: TextInputType.number,
+          ),
+        );
+      case 'Food':
+        return SizedBox(
+          width: double.infinity,
+          child: TextFormField(
+            decoration: InputDecoration(
+              labelText: 'Food in Kg/Pieces',
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
               ),

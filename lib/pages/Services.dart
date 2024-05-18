@@ -6,16 +6,16 @@ import '../cards/goods.dart';
 import '../cards/goodtile.dart';
 import 'displaypage.dart';
 
-class PhonesPage extends StatefulWidget {
-  const PhonesPage({super.key});
+class ServicesPage extends StatefulWidget {
+  const ServicesPage({super.key});
 
   @override
-  State<PhonesPage> createState() => _PhonesPageState();
+  State<ServicesPage> createState() => _ServicesPageState();
 }
 
 late Stream<QuerySnapshot> _stream;
 
-class _PhonesPageState extends State<PhonesPage> {
+class _ServicesPageState extends State<ServicesPage> {
   @override
   void initState() {
     // TODO: implement initState
@@ -23,7 +23,7 @@ class _PhonesPageState extends State<PhonesPage> {
 
     _stream = FirebaseFirestore.instance
         .collection('uploads')
-        .where('Category', isEqualTo: 'Phones&Accessories')
+        .where('Category', isEqualTo: 'Services')
         .snapshots();
   }
 
@@ -32,8 +32,8 @@ class _PhonesPageState extends State<PhonesPage> {
     return Scaffold(
         backgroundColor: Colors.grey[900],
         appBar: AppBar(
-          centerTitle:true,
-          title: Text('P H O N E S'),
+            centerTitle:true,
+          title: Text('S E R V I C E S'),
         ),
         body: StreamBuilder<QuerySnapshot>(
             stream: _stream,
@@ -55,7 +55,7 @@ class _PhonesPageState extends State<PhonesPage> {
               // final containsBed = snapshot.data!.docs.any((doc) => (doc['Category'] as String).toLowerCase().contains("Bed"));
               //   if (containsBed){
               if (documents.isEmpty) {
-                return Center(child: Text("No Phones Uploaded"));
+                return Center(child: Text("No Services"));
               }
               return SingleChildScrollView(
                   child: Column(

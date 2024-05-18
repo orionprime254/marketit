@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:marketit/cards/categories.dart';
 import 'package:marketit/cards/goods.dart';
 import 'package:marketit/cards/goodtile.dart';
@@ -16,8 +17,10 @@ import 'package:marketit/pages/sell_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'Computers.dart';
+import 'Food.dart';
 import 'Furniture.dart';
 import 'Gas.dart';
+import 'Services.dart';
 import 'Phones.dart';
 import 'Stereo.dart';
 import 'mydrawer.dart';
@@ -107,14 +110,15 @@ class _HomePageState extends State<HomePage> {
             List<Map> itemsFromFirestore =
                 documents.map((e) => e.data() as Map).toList();
             return SingleChildScrollView(
-              child: Column(children: [
+              child: Column(
+                  children: [
                 //find what's being sold
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 25.0),
                   child: Text(
-                    'Find Your New Property',
-                    style: TextStyle(
-                      fontSize: 36,
+                    'Find Your New Property COMRADE!',
+                    style: GoogleFonts.bebasNeue(
+                      fontSize: 50,
                     ),
                   ),
                 ),
@@ -212,12 +216,26 @@ class _HomePageState extends State<HomePage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const BedPage()),
+                                builder: (context) => const ServicesPage()),
                           );
                         },
                         child: ProductTile(
-                          productName: 'Mattress',
+                          productName: 'Services',
                           imagePath: 'lib/imgs/air-mattress.png',
+                          onTap: () {},
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const FoodPage()),
+                          );
+                        },
+                        child: ProductTile(
+                          productName: 'Food',
+                          imagePath: 'lib/imgs/dinner.png',
                           onTap: () {},
                         ),
                       ),
@@ -324,7 +342,8 @@ class _HomePageState extends State<HomePage> {
                         );
                       },
                       child: Container(
-                        height: 300,
+                       // padding: EdgeInsets.all(5),
+                        height: 420,
                         width: 200,
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(12),
@@ -333,56 +352,50 @@ class _HomePageState extends State<HomePage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             ClipRRect(
-                              child: AspectRatio(
-                                aspectRatio: 16 / 9,
-                                child: CachedNetworkImage(
-                                  errorWidget: (context, url, error) => Icon(Icons.error),
-                                  height: 100,
-                                  width: double.infinity,
-                                  fit: BoxFit.cover,
-                                  alignment: FractionalOffset.center, imageUrl:  "${thisItem['image']}",
-                                ),
+                              borderRadius: BorderRadius.circular(12),
+                              child: CachedNetworkImage(
+                                errorWidget: (context, url, error) => Icon(Icons.error),
+                                height: 100,
+                                width: double.infinity,
+                                fit: BoxFit.cover,
+                               // alignment: FractionalOffset.center,
+                                imageUrl:  "${thisItem['image']}",
                               ),
                             ),
-                            SizedBox(
-                              height: 5,
-                            ),
+
                             Padding(
-                              padding: const EdgeInsets.only(left: 10.0),
-                              child: Text(
-                                "${thisItem['Title']}",
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                              padding: const EdgeInsets.symmetric(vertical:8.0,horizontal: 6),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "${thisItem['Title']}",
+                                    style: TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        "Ksh ${thisItem['Price']}",
+                                        style: TextStyle(fontSize: 13),
+                                      ),
+                                      IconButton(
+                                        onPressed: () {
+                                          toggleWishlist(itemId);
+                                        },
+                                        icon: wishlist.contains(itemId)
+                                            ? Icon(
+                                          Icons.favorite,
+                                          color: Colors.red,
+                                        )
+                                            : Icon(Icons.favorite_border),
+                                      )
+                                    ],
+                                  ),
+                                ],
                               ),
-                            ),
-                            SizedBox(
-                              height: 4,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 8.0),
-                                  child: Text(
-                                    "Ksh ${thisItem['Price']}",
-                                    style: TextStyle(fontSize: 13),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(right: 10.0),
-                                  child: IconButton(
-                                    onPressed: () {
-                                      toggleWishlist(itemId);
-                                    },
-                                    icon: wishlist.contains(itemId)
-                                        ? Icon(
-                                            Icons.favorite,
-                                            color: Colors.red,
-                                          )
-                                        : Icon(Icons.favorite_border),
-                                  ),
-                                )
-                              ],
-                            ),
+                            )
                           ],
                         ),
                       ),
