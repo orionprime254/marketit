@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../auth/auth_services.dart';
 import '../components/button.dart';
 import '../components/textfield.dart';
 
@@ -114,11 +115,63 @@ class _RegisterPageState extends State<RegisterPage> {
                       hintText: ' confirm password',
                       obscureText: true),
                   SizedBox(
-                    height: 10,
+                    height: 50,
                   ),
+
                   MyButton(
                     onTap: signUp,
                     text: 'Sign Up',
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: Row(
+                      children: [
+                        Expanded(
+                            child: Divider(
+                              thickness: 0.5,
+                              color: Colors.grey[400],
+                            )),
+                        Text('Or Continue with'),
+                        SizedBox(
+                          height: 50,
+                        ),
+                        Expanded(
+                          child: Divider(
+                            thickness: 0.5,
+                            color: Colors.grey[400],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 30,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      GestureDetector(
+                        onTap: ()=>AuthService().signInWithGoogle(),
+                        child: Container(
+                            padding: EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(color: Colors.white),
+                                color: Colors.grey[200]
+                            ),
+                            child: Image.asset('lib/imgs/search.png',height: 40,)),
+                      ),
+                      SizedBox(width: 15.0,),
+                      Container(
+                          padding: EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(color: Colors.white),
+                              color: Colors.grey[200]
+                          ),
+                          child: Image.asset('lib/imgs/facebook.png',height: 40,)),
+
+                    ],
                   ),
                   SizedBox(
                     height: 30,

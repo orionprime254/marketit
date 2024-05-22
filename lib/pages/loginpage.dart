@@ -1,6 +1,8 @@
 //import 'package:campomart/components/button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:marketit/auth/auth_services.dart';
 import 'package:marketit/components/textfield.dart';
+
 //import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -22,21 +24,30 @@ class _LoginPageState extends State<LoginPage> {
   final passwordTextController = TextEditingController();
 
   void signIn() async {
-    showDialog(context: context, builder: (context)=> Center(child: CupertinoActivityIndicator(),));
+    showDialog(
+        context: context,
+        builder: (context) => Center(
+              child: CupertinoActivityIndicator(),
+            ));
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: emailTextController.text,
           password: passwordTextController.text);
-      if(context.mounted)Navigator.pop(context);
-    }on FirebaseAuthException catch (e){
+      if (context.mounted) Navigator.pop(context);
+    } on FirebaseAuthException catch (e) {
       Navigator.pop(context);
-      displayMessage (e.code);}
+      displayMessage(e.code);
+    }
   }
-  void displayMessage(String message){
-    showDialog(context: context, builder: (context)=> AlertDialog(
-      title: Text(message),
-    ));
+
+  void displayMessage(String message) {
+    showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+              title: Text(message),
+            ));
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,7 +74,6 @@ class _LoginPageState extends State<LoginPage> {
                   MyTextField(
                       controller: emailTextController,
                       hintText: 'email@gmail.com',
-                  
                       obscureText: false),
                   SizedBox(
                     height: 10,
@@ -75,9 +85,46 @@ class _LoginPageState extends State<LoginPage> {
                   SizedBox(
                     height: 10,
                   ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 25),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(
+                          'Forgot Password',
+                          style: TextStyle(color: Colors.grey[600]),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
                   MyButton(
-                   onTap: signIn,
+                    onTap: signIn,
                     text: 'Sign In',
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: Row(
+                      children: [
+                        Expanded(
+                            child: Divider(
+                          thickness: 0.5,
+                          color: Colors.grey[400],
+                        )),
+                        Text('Or Continue with'),
+                        Expanded(
+                          child: Divider(
+                            thickness: 0.5,
+                            color: Colors.grey[400],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                   SizedBox(
                     height: 30,
@@ -85,7 +132,39 @@ class _LoginPageState extends State<LoginPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text('Not a Member?',style: TextStyle(color: Colors.white),),
+                      GestureDetector(
+                        onTap: ()=>AuthService().signInWithGoogle(),
+                        child: Container(
+                            padding: EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(color: Colors.white),
+                              color: Colors.grey[200]
+                            ),
+                            child: Image.asset('lib/imgs/search.png',height: 40,)),
+                      ),
+                      SizedBox(width: 15.0,),
+                      Container(
+                          padding: EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(color: Colors.white),
+                              color: Colors.grey[200]
+                          ),
+                          child: Image.asset('lib/imgs/facebook.png',height: 40,)),
+
+                    ],
+                  ),
+                  SizedBox(
+                    height: 30,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Not a Member?',
+                        style: TextStyle(color: Colors.white),
+                      ),
                       GestureDetector(
                         onTap: widget.onTap,
                         child: Text(

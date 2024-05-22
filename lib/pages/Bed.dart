@@ -32,7 +32,7 @@ class _BedPageState extends State<BedPage> {
     return Scaffold(
         backgroundColor: Colors.grey[900],
         appBar: AppBar(
-          centerTitle:true,
+          centerTitle: true,
           title: Text('B E D'),
         ),
         body: StreamBuilder<QuerySnapshot>(
@@ -57,8 +57,7 @@ class _BedPageState extends State<BedPage> {
               if (documents.isEmpty) {
                 return Center(child: Text("No Bed Uploaded"));
               }
-              return SingleChildScrollView(
-                  child: Column(
+              return Column(
                 children: [
                   GridView.builder(
                     shrinkWrap: true,
@@ -96,9 +95,8 @@ class _BedPageState extends State<BedPage> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              ClipRRect(
-                                child: AspectRatio(
-                                  aspectRatio: 16 / 9,
+                              Expanded(
+                                child: ClipRRect(
                                   child: Image.network(
                                     "${thisItem['image']}",
                                     //errorWidget: (context, url, error) => Icon(Icons.error),
@@ -123,32 +121,35 @@ class _BedPageState extends State<BedPage> {
                               SizedBox(
                                 height: 4,
                               ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 8.0),
-                                    child: Text(
-                                      "Ksh ${thisItem['Price']}",
-                                      style: TextStyle(fontSize: 13),
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 8.0),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 8.0),
+                                      child: Text(
+                                        "Ksh ${thisItem['Price']}",
+                                        style: TextStyle(fontSize: 13),
+                                      ),
                                     ),
-                                  ),
-                                  // Padding(
-                                  //   padding: const EdgeInsets.only(right: 10.0),
-                                  //   child: IconButton(
-                                  //     onPressed: () {
-                                  //       toggleWishlist(itemId);
-                                  //     },
-                                  //     icon: wishlist.contains(itemId)
-                                  //         ? Icon(
-                                  //       Icons.favorite,
-                                  //       color: Colors.red,
-                                  //     )
-                                  //         : Icon(Icons.favorite_border),
-                                  //   ),
-                                  // )
-                                ],
+                                    // Padding(
+                                    //   padding: const EdgeInsets.only(right: 10.0),
+                                    //   child: IconButton(
+                                    //     onPressed: () {
+                                    //       toggleWishlist(itemId);
+                                    //     },
+                                    //     icon: wishlist.contains(itemId)
+                                    //         ? Icon(
+                                    //       Icons.favorite,
+                                    //       color: Colors.red,
+                                    //     )
+                                    //         : Icon(Icons.favorite_border),
+                                    //   ),
+                                    // )
+                                  ],
+                                ),
                               ),
                             ],
                           ),
@@ -157,7 +158,7 @@ class _BedPageState extends State<BedPage> {
                     },
                   )
                 ],
-              ));
+              );
             }));
   }
 }
