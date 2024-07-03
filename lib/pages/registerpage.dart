@@ -26,18 +26,18 @@ class _RegisterPageState extends State<RegisterPage> {
     showDialog(
         context: context,
         builder: (context) => Center(
-              child: CupertinoActivityIndicator(),
-            ));
+          child: CupertinoActivityIndicator(),
+        ));
     if (passwordTextController.text != confirmPasswordTextController.text) {
       Navigator.pop(context);
       displayMessage("Passwords don't match!");
       return;
     }
     try {
-       UserCredential userCredential = await FirebaseAuth.instance
+      UserCredential userCredential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(
-              email: emailTextController.text,
-              password: passwordTextController.text);
+          email: emailTextController.text,
+          password: passwordTextController.text);
       FirebaseFirestore.instance
           .collection("Users")
           .doc(userCredential.user!.email)
@@ -56,14 +56,14 @@ class _RegisterPageState extends State<RegisterPage> {
     showDialog(
         context: context,
         builder: (context) => AlertDialog(
-              title: Text(message),
-            ));
+          title: Text(message),
+        ));
   }
   Future<void> createUserDocument (UserCredential? userCredential)async{
     if (userCredential !=null && userCredential.user != null){
       await FirebaseFirestore.instance.collection("Users").doc(userCredential.user!.email).set(
           {'email':userCredential.user!.email,
-           // 'upload_items':_items
+            // 'upload_items':_items
           });
     }
   }

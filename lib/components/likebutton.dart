@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 class LikeButton extends StatelessWidget {
   final bool isLiked;
-  void Function()? onTap;
+  final VoidCallback onTap;
 
-  LikeButton({super.key, required this.isLiked, required this.onTap});
+  LikeButton({Key? key, required this.isLiked, required this.onTap}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +12,7 @@ class LikeButton extends StatelessWidget {
       onTap: onTap,
       child: Icon(
         isLiked ? Icons.favorite : Icons.favorite_border,
-        color: isLiked ? Colors.red : Colors.grey,
+        color: isLiked ? Colors.orange : Colors.grey,
       ),
     );
   }

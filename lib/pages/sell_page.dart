@@ -6,6 +6,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:marketit/pages/HomePage.dart';
@@ -19,6 +21,7 @@ class SellPage extends StatefulWidget {
 }
 
 class _SellPageState extends State<SellPage> {
+  var  locationMessage = "";
   String _selectedCategory = 'Bed';
   String _selectedCondition = 'New';
   TextEditingController _titleController = TextEditingController();
@@ -33,8 +36,21 @@ class _SellPageState extends State<SellPage> {
     _titleController.dispose();
     _descriptionController.dispose();
     _priceController.dispose();
+    
     super.dispose();
   }
+  // void getCurrentLocation()async{
+  //   var position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+  //   var lastPosition = await Geolocator.getLastKnownPosition();
+  //   print(lastPosition);
+  //   List<Placemark> placemarks = await placemarkFromCoordinates(position.latitude, position.longitude);
+  //   Placemark place = placemarks[0];
+  //   String address = "${place.street}, ${place.locality}";
+  //
+  //   setState(() {
+  //     locationMessage = address;
+  //   });
+  // }
   
   @override
   Widget build(BuildContext context) {
@@ -162,6 +178,12 @@ class _SellPageState extends State<SellPage> {
               keyboardType: TextInputType.number, // Allow only numbers
             ),
             const SizedBox(height: 20),
+            // Row(
+            //   children: [
+            //     Expanded(child: Text(locationMessage)),
+            //     GestureDetector(onTap:(){getCurrentLocation();},child: Image.asset('lib/imgs/google-maps (1).png',height: 30,)),
+            //   ],
+            // ),
             ElevatedButton(
               onPressed: () async {
                 User? user = FirebaseAuth.instance.currentUser;
@@ -190,6 +212,7 @@ class _SellPageState extends State<SellPage> {
                     "Condition": condition,
                     "Category":category,
                     'Likes': [],
+                   // "Location":locationMessage
                   });
                   _titleController.text = '';
                   _priceController.text = '';

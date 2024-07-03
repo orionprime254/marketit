@@ -82,7 +82,7 @@ class _StereoPageState extends State<StereoPage> {
                                     imageUrl: thisItem['image'],
                                     name: thisItem['Title'],
                                     price: thisItem['Price'].toString(),
-                                    description: thisItem['Description'],
+                                    description: thisItem['Description'],userEmail: thisItem['userId'],
                                   ),
                                 ),
                               );

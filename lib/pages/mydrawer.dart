@@ -10,6 +10,7 @@ class MyDrawer extends StatelessWidget {
   });
   void signUserOut(){
     FirebaseAuth.instance.signOut();
+
   }
 
   @override

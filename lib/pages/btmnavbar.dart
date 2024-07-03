@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:marketit/pages/homepage.dart';
 import 'package:marketit/pages/messagespage.dart';
 import 'package:marketit/pages/notificationspage.dart';
+import 'package:marketit/pages/profilepage.dart';
 import 'package:marketit/pages/savedpage.dart';
 import 'package:marketit/pages/sell_page.dart';
 
@@ -30,10 +31,11 @@ class _BottomNavBarState extends State<BottomNavBar> {
   void _initializePages() {
     _pages = [
       HomePage(),
-      SavedPage(wishlist: [],),
+      //SavedPage(wishlist: [],),
       SellPage(),
-      NotificationPage(),
-      MessagePage(),
+     // NotificationPage(),
+    //  MessagePage(),
+      ProfilePage()
     ];
   }
 
@@ -58,20 +60,20 @@ class _BottomNavBarState extends State<BottomNavBar> {
             ),
             label: '',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite, color: Colors.orange),
-            label: '',
-          ),
+          // BottomNavigationBarItem(
+          //   icon: Icon(Icons.favorite, color: Colors.orange),
+          //   label: '',
+          // ),
           BottomNavigationBarItem(
             icon: Icon(Icons.add, color: Colors.orange),
             label: '',
           ),
+          // BottomNavigationBarItem(
+          //   icon: Icon(Icons.notifications, color: Colors.orange),
+          //   label: '',
+          // ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.notifications, color: Colors.orange),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.message_sharp, color: Colors.orange),
+            icon: Icon(Icons.person, color: Colors.orange),
             label: '',
           ),
         ],

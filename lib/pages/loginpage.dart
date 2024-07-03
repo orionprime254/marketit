@@ -6,6 +6,8 @@ import 'package:marketit/components/textfield.dart';
 //import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:marketit/pages/btmnavbar.dart';
+import 'package:marketit/pages/forgotpasswordpage.dart';
 
 import '../components/button.dart';
 import '../components/textfield.dart';
@@ -27,14 +29,28 @@ class _LoginPageState extends State<LoginPage> {
     showDialog(
         context: context,
         builder: (context) => Center(
-              child: CupertinoActivityIndicator(),
-            ));
+          child: CupertinoActivityIndicator(),
+        ));
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: emailTextController.text,
           password: passwordTextController.text);
       if (context.mounted) Navigator.pop(context);
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> BottomNavBar()));
     } on FirebaseAuthException catch (e) {
+      Navigator.pop(context);
+      displayMessage(e.code);
+    }
+  }
+  void signInWithGoogle()async{
+    showDialog(context: context, builder: (context)=> Center(child: CupertinoActivityIndicator(),));
+    try {
+      final userCredential = await AuthService().signInWithGoogle();
+      if(userCredential!=null){
+        if(context.mounted)Navigator.pop(context);
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> BottomNavBar()));
+      }
+    }on FirebaseAuthException catch (e){
       Navigator.pop(context);
       displayMessage(e.code);
     }
@@ -44,8 +60,8 @@ class _LoginPageState extends State<LoginPage> {
     showDialog(
         context: context,
         builder: (context) => AlertDialog(
-              title: Text(message),
-            ));
+          title: Text(message),
+        ));
   }
 
   @override
@@ -85,16 +101,23 @@ class _LoginPageState extends State<LoginPage> {
                   SizedBox(
                     height: 10,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 25),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Text(
-                          'Forgot Password',
-                          style: TextStyle(color: Colors.grey[600]),
-                        ),
-                      ],
+                  GestureDetector(
+                    onTap: (){
+                      Navigator.push(context, MaterialPageRoute(builder: (context){
+                        return ForgotPasswordPage();
+                      }));
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 25),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text(
+                            'Forgot Password',
+                            style: TextStyle(color: Colors.grey[600]),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                   SizedBox(
@@ -113,9 +136,9 @@ class _LoginPageState extends State<LoginPage> {
                       children: [
                         Expanded(
                             child: Divider(
-                          thickness: 0.5,
-                          color: Colors.grey[400],
-                        )),
+                              thickness: 0.5,
+                              color: Colors.grey[400],
+                            )),
                         Text('Or Continue with'),
                         Expanded(
                           child: Divider(
@@ -137,9 +160,9 @@ class _LoginPageState extends State<LoginPage> {
                         child: Container(
                             padding: EdgeInsets.all(20),
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(16),
-                              border: Border.all(color: Colors.white),
-                              color: Colors.grey[200]
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(color: Colors.white),
+                                color: Colors.grey[200]
                             ),
                             child: Image.asset('lib/imgs/search.png',height: 40,)),
                       ),

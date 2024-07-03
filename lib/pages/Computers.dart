@@ -82,7 +82,7 @@ class _ComputersPageState extends State<ComputersPage> {
                                     imageUrl: thisItem['image'],
                                     name: thisItem['Title'],
                                     price: thisItem['Price'].toString(),
-                                    description: thisItem['Description'],
+                                    description: thisItem['Description'],userEmail: thisItem['userId'],
                                   ),
                                 ),
                               );

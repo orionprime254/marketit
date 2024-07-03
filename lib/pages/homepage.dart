@@ -2,7 +2,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:marketit/components/likebutton.dart';
 import 'package:marketit/pages/profilepage.dart';
+import 'package:marketit/pages/savedpage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../cards/objectcard.dart';
 import 'Bed.dart';
@@ -28,6 +30,7 @@ class _HomePageState extends State<HomePage> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
   List<String> wishlist = [];
+  bool isLiked = false;
 
   void toggleWishlist(String itemId) {
     setState(() {
@@ -38,6 +41,11 @@ class _HomePageState extends State<HomePage> {
       }
     });
     saveWishlist();
+  }
+  void toggleLike(){
+    setState(() {
+      isLiked = !isLiked;
+    });
   }
 
   void loadWishlist() async {
@@ -57,7 +65,10 @@ class _HomePageState extends State<HomePage> {
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => ProfilePage()));
   }
-
+  void goToLikesPage() {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => SavedPage(wishlist: wishlist)));
+  }
   late Stream<QuerySnapshot> _stream;
 
   @override
@@ -81,7 +92,9 @@ class _HomePageState extends State<HomePage> {
           .where('Title', isGreaterThanOrEqualTo: query)
           .where('Title', isLessThanOrEqualTo: query + '\uf8ff')
           .snapshots();
+
     }
+
   }
 
   @override
@@ -317,6 +330,7 @@ class _HomePageState extends State<HomePage> {
 
                   return GridView.builder(
                     itemCount: itemsFromFirestore.length,
+                    physics: NeverScrollableScrollPhysics(),
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
                       crossAxisSpacing: 16,
@@ -335,7 +349,8 @@ class _HomePageState extends State<HomePage> {
                                 imageUrl: thisItem['image'],
                                 name: thisItem['Title'],
                                 price: thisItem['Price'].toString(),
-                                description: thisItem['Description'],
+                                description: thisItem['Description'], userEmail: thisItem['userId'],
+                               // number:thisItem['whatsapp']
                               ),
                             ),
                           );
@@ -363,7 +378,7 @@ class _HomePageState extends State<HomePage> {
                                   imageUrl: "${thisItem['image']}",
                                   errorWidget: (context, url, error) =>
                                       Icon(Icons.error),
-                                  height: 190,
+                                  height: 150,
                                   width: double.infinity,
                                   fit: BoxFit.cover,
                                   alignment: FractionalOffset.center,
@@ -381,7 +396,7 @@ class _HomePageState extends State<HomePage> {
                                         fontSize: 16,
                                         color: Colors.white,
                                       ),
-                                      maxLines: 2,
+                                      maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                     SizedBox(height: 4),
