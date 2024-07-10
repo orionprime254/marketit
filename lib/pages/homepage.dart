@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+
 import 'package:marketit/components/likebutton.dart';
 import 'package:marketit/pages/profilepage.dart';
 import 'package:marketit/pages/savedpage.dart';
@@ -110,15 +110,15 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           children: [
             SizedBox(height: 10,),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 25.0),
-              child: Text(
-                'Find Your New Property COMRADE!',
-                style: GoogleFonts.bebasNeue(
-                  fontSize: 50,
-                ),
-              ),
-            ),
+            // Padding(
+            //   padding: const EdgeInsets.symmetric(horizontal: 25.0),
+            //   child: Text(
+            //     'Find Your New Property COMRADE!',
+            //     style: GoogleFonts.bebasNeue(
+            //       fontSize: 50,
+            //     ),
+            //   ),
+            // ),
             SizedBox(height: 25),
             // Search bar
             Padding(
