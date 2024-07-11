@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:marketit/ads/custom_banner.dart';
 
 import 'package:marketit/components/likebutton.dart';
 import 'package:marketit/pages/profilepage.dart';
@@ -105,10 +106,11 @@ class _HomePageState extends State<HomePage> {
         elevation: 0,
         backgroundColor: Colors.transparent,
       ),
-      drawer: MyDrawer(onProfileTap: goToProfilePage),
+      //drawer: MyDrawer(onProfileTap: goToProfilePage),
       body: SingleChildScrollView(
         child: Column(
           children: [
+            CustomBannerAd(),
             SizedBox(height: 10,),
             // Padding(
             //   padding: const EdgeInsets.symmetric(horizontal: 25.0),
