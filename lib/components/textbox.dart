@@ -9,7 +9,7 @@ class MyTextBox extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.black54,
+        color: Colors.grey[500],
         borderRadius: BorderRadius.circular(10),
       ),
       padding: EdgeInsets.only(left: 15,bottom: 15),
@@ -19,11 +19,11 @@ class MyTextBox extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(sectionName,style: TextStyle(color: Colors.grey[400]),),
-              IconButton(onPressed: onPressed, icon: Icon(Icons.settings,color: Colors.grey,))
+              Text(sectionName,style: TextStyle(color: Theme.of(context).colorScheme.secondary),),
+              IconButton(onPressed: onPressed, icon: Icon(Icons.edit,color:Theme.of(context).colorScheme.primary,))
             ],
           ),
-          Text(text),
+          Text(text,style: TextStyle(fontWeight: FontWeight.bold),),
 
         ],
       ),

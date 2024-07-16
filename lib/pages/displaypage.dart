@@ -64,10 +64,14 @@ class _DisplayPageState extends State<DisplayPage> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Image.network(
-                  widget.imageUrl,
-                  height: 400,
-                  fit: BoxFit.contain,
+                Container(
+                  //margin: EdgeInsets.fromLTRB(25, 0, 25, 30),
+                  child: Image.network(
+                    widget.imageUrl,
+                    height: 400,
+                    fit: BoxFit.contain,
+                    width: double.infinity,
+                  ),
                 ),
                 SizedBox(
                   height: 10,

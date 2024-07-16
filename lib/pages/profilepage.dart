@@ -122,7 +122,7 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             label: Text(
               "logout",
-              style: TextStyle(color: Colors.orange),
+              style: TextStyle(color: Colors.teal),
             ),
           ),
         ],
@@ -130,124 +130,128 @@ class _ProfilePageState extends State<ProfilePage> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
-            future: getUserDetails(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              } else if (snapshot.hasError) {
-                return Text("Error: ${snapshot.error}");
-              } else if (snapshot.hasData) {
-                Map<String, dynamic>? user = snapshot.data!.data();
-                return SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              currentUser!.email!, // Check for nullability
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            MyTextBox(
-                              text: user?["username"] ?? '',
-                              sectionName: 'username',
-                              onPressed: () => editField('username'),
-                            ),
-                            SizedBox(height: 10),
-                            MyTextBox(
-                              text: user?['whatsapp'] ?? '',
-                              sectionName: ' Whatsapp Phone Number',
-                              onPressed: () => editField('whatsapp'),
-                            ),
-                          ],
-                        ),
-                      ),
-                      StreamBuilder<QuerySnapshot>(
-                        stream: FirebaseFirestore.instance
-                            .collection("uploads")
-                            .where("userId", isEqualTo: currentUser!.email)
-                            .snapshots(),
-                        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                          if (snapshot.connectionState == ConnectionState.waiting) {
-                            return Center(child: CircularProgressIndicator());
-                          } else if (snapshot.hasError) {
-                            return Text("Error: ${snapshot.error}");
-                          } else {
-                            return GridView.builder(
-                              shrinkWrap: true,
-                              physics: NeverScrollableScrollPhysics(),
-                              itemCount: snapshot.data!.docs.length,
-                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 3,
-                                crossAxisSpacing: 2,
-                                mainAxisSpacing: 2,
-                                mainAxisExtent: 200,
+          SingleChildScrollView(
+            child: Expanded(
+              child: FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+                future: getUserDetails(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  } else if (snapshot.hasError) {
+                    return Text("Error: ${snapshot.error}");
+                  } else if (snapshot.hasData) {
+                    Map<String, dynamic>? user = snapshot.data!.data();
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                currentUser!.email!, // Check for nullability
+                                style: TextStyle(fontWeight: FontWeight.bold),
                               ),
-                              itemBuilder: (BuildContext context, int index) {
-                                Map<String, dynamic> item = snapshot.data!.docs[index].data() as Map<String, dynamic>;
-                                String postId = snapshot.data!.docs[index].id;
-                                return GestureDetector(
-                                  onTap: () {},
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: Colors.grey),
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Image.network(
-                                          item['image'],
-                                          height: 100,
-                                          width: double.infinity,
-                                          fit: BoxFit.cover,
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                item['Title'],
-                                                style: TextStyle(fontWeight: FontWeight.bold),
-                                              ),
-                                              Text('Ksh  ${item['Price']}'),
-                                              Row(
-                                                mainAxisAlignment: MainAxisAlignment.end,
-                                                children: [
-                                                  DeleteButton(
-                                                    onTap: () => deletePost(postId),
-                                                  )
-                                                ],
-                                              )
-                                            ],
+                              MyTextBox(
+                                text: user?["username"] ?? '',
+                                sectionName: 'username',
+                                onPressed: () => editField('username'),
+                              ),
+                              SizedBox(height: 10),
+                              MyTextBox(
+                                text: user?['whatsapp'] ?? '',
+                                sectionName: ' Whatsapp Phone Number',
+                                onPressed: () => editField('whatsapp'),
+                              ),
+                            ],
+                          ),
+                        ),
+                        StreamBuilder<QuerySnapshot>(
+                          stream: FirebaseFirestore.instance
+                              .collection("uploads")
+                              .where("userId", isEqualTo: currentUser!.email)
+                              .snapshots(),
+                          builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                            if (snapshot.connectionState == ConnectionState.waiting) {
+                              return Center(child: CircularProgressIndicator());
+                            } else if (snapshot.hasError) {
+                              return Text("Error: ${snapshot.error}");
+                            } else {
+                              return GridView.builder(
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                                itemCount: snapshot.data!.docs.length,
+                                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 3,
+                                  crossAxisSpacing: 2,
+                                  mainAxisSpacing: 2,
+                                  mainAxisExtent: 200,
+                                ),
+                                itemBuilder: (BuildContext context, int index) {
+                                  Map<String, dynamic> item = snapshot.data!.docs[index].data() as Map<String, dynamic>;
+                                  String postId = snapshot.data!.docs[index].id;
+                                  return GestureDetector(
+                                    onTap: () {},
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        border: Border.all(color: Colors.grey),
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Image.network(
+                                            item['image'],
+                                            height: 100,
+                                            width: double.infinity,
+                                            fit: BoxFit.cover,
                                           ),
-                                        ),
-                                      ],
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Column(
+
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  item['Title'],
+                                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                                ),
+                                                Text('Ksh  ${item['Price']}'),
+                                                Row(
+                                                  mainAxisAlignment: MainAxisAlignment.end,
+                                                  children: [
+                                                    DeleteButton(
+
+                                                      onTap: () => deletePost(postId),
+                                                    )
+                                                  ],
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                );
-                              },
-                            );
-                          }
-                        },
-                      ),
-                    ],
-                  ),
-                );
-              } else {
-                return Text('No Data');
-              }
-            },
+                                  );
+                                },
+                              );
+                            }
+                          },
+                        ),
+                      ],
+                    );
+                  } else {
+                    return Text('No Data');
+                  }
+                },
+              ),
+            ),
           ),
           //Spacer(),
-          CustomBannerAd()
+         // CustomBannerAd()
         ],
       ),
     );

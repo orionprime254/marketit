@@ -4,6 +4,7 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:marketit/auth/auth.dart';
 import 'package:marketit/firebase_options.dart';
 import 'package:marketit/pages/btmnavbar.dart';
+import 'package:marketit/theme/theme.dart';
 
 
 void main() async {
@@ -23,8 +24,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: AuthPage(),
-      theme:
-      ThemeData(brightness: Brightness.dark, primarySwatch: Colors.orange),
+      themeMode: ThemeMode.system,
+      theme: lightMode,
+        darkTheme: darkMode,
+
     );
   }
 }

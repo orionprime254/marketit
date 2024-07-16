@@ -1,5 +1,6 @@
 //import 'package:campomart/components/button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:marketit/auth/auth_services.dart';
 import 'package:marketit/components/textfield.dart';
 
@@ -29,28 +30,35 @@ class _LoginPageState extends State<LoginPage> {
     showDialog(
         context: context,
         builder: (context) => Center(
-          child: CupertinoActivityIndicator(),
-        ));
+              child: CupertinoActivityIndicator(),
+            ));
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: emailTextController.text,
           password: passwordTextController.text);
       if (context.mounted) Navigator.pop(context);
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> BottomNavBar()));
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => BottomNavBar()));
     } on FirebaseAuthException catch (e) {
       Navigator.pop(context);
       displayMessage(e.code);
     }
   }
-  void signInWithGoogle()async{
-    showDialog(context: context, builder: (context)=> Center(child: CupertinoActivityIndicator(),));
+
+  void signInWithGoogle() async {
+    showDialog(
+        context: context,
+        builder: (context) => Center(
+              child: CupertinoActivityIndicator(),
+            ));
     try {
       final userCredential = await AuthService().signInWithGoogle();
-      if(userCredential!=null){
-        if(context.mounted)Navigator.pop(context);
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> BottomNavBar()));
+      if (userCredential != null) {
+        if (context.mounted) Navigator.pop(context);
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => BottomNavBar()));
       }
-    }on FirebaseAuthException catch (e){
+    } on FirebaseAuthException catch (e) {
       Navigator.pop(context);
       displayMessage(e.code);
     }
@@ -60,14 +68,14 @@ class _LoginPageState extends State<LoginPage> {
     showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text(message),
-        ));
+              title: Text(message),
+            ));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[900],
+      backgroundColor: Theme.of(context).colorScheme.background,
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -83,10 +91,28 @@ class _LoginPageState extends State<LoginPage> {
                   SizedBox(
                     height: 50,
                   ),
-                  Text("Welcome Back!"),
-                  SizedBox(
-                    height: 50,
-                  ),
+                  Container(
+                      margin: EdgeInsets.fromLTRB(25, 0, 25, 20),
+                      child: Align(
+                          alignment: Alignment.topLeft,
+                          child: Text(
+                            "Welcome Back to "
+                            "MarketIt",
+                            style: TextStyle(
+                                fontSize: 30, fontWeight: FontWeight.w700),
+                          ))),
+                  Container(
+                      margin: EdgeInsets.fromLTRB(25, 0, 25, 20),
+                      child: Align(
+                          alignment: Alignment.topLeft,
+                          child: Text(
+                            'A Comrade\'s Shopping Choice',
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ))),
+
                   MyTextField(
                       controller: emailTextController,
                       hintText: 'email@gmail.com',
@@ -102,8 +128,9 @@ class _LoginPageState extends State<LoginPage> {
                     height: 10,
                   ),
                   GestureDetector(
-                    onTap: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context){
+                    onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
                         return ForgotPasswordPage();
                       }));
                     },
@@ -114,7 +141,7 @@ class _LoginPageState extends State<LoginPage> {
                         children: [
                           Text(
                             'Forgot Password',
-                            style: TextStyle(color: Colors.grey[600]),
+                            style: TextStyle(color: Colors.grey[900]),
                           ),
                         ],
                       ),
@@ -136,10 +163,10 @@ class _LoginPageState extends State<LoginPage> {
                       children: [
                         Expanded(
                             child: Divider(
-                              thickness: 0.5,
-                              color: Colors.grey[400],
-                            )),
-                        Text('Or Continue with'),
+                          thickness: 0.5,
+                          color: Colors.grey[400],
+                        )),
+                       // Text('Or Continue with'),
                         Expanded(
                           child: Divider(
                             thickness: 0.5,
@@ -152,32 +179,32 @@ class _LoginPageState extends State<LoginPage> {
                   SizedBox(
                     height: 30,
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      GestureDetector(
-                        onTap: ()=>AuthService().signInWithGoogle(),
-                        child: Container(
-                            padding: EdgeInsets.all(20),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(16),
-                                border: Border.all(color: Colors.white),
-                                color: Colors.grey[200]
-                            ),
-                            child: Image.asset('lib/imgs/search.png',height: 40,)),
-                      ),
-                      SizedBox(width: 15.0,),
-                      Container(
-                          padding: EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(16),
-                              border: Border.all(color: Colors.white),
-                              color: Colors.grey[200]
-                          ),
-                          child: Image.asset('lib/imgs/facebook.png',height: 40,)),
-
-                    ],
-                  ),
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.center,
+                  //   children: [
+                  //     GestureDetector(
+                  //       onTap: ()=>AuthService().signInWithGoogle(),
+                  //       child: Container(
+                  //           padding: EdgeInsets.all(20),
+                  //           decoration: BoxDecoration(
+                  //               borderRadius: BorderRadius.circular(16),
+                  //               border: Border.all(color: Colors.white),
+                  //               color: Colors.grey[200]
+                  //           ),
+                  //           child: Image.asset('lib/imgs/search.png',height: 40,)),
+                  //     ),
+                  //     SizedBox(width: 15.0,),
+                  //     Container(
+                  //         padding: EdgeInsets.all(20),
+                  //         decoration: BoxDecoration(
+                  //             borderRadius: BorderRadius.circular(16),
+                  //             border: Border.all(color: Colors.white),
+                  //             color: Colors.grey[200]
+                  //         ),
+                  //         child: Image.asset('lib/imgs/facebook.png',height: 40,)),
+                  //
+                  //   ],
+                  // ),
                   SizedBox(
                     height: 30,
                   ),
@@ -186,7 +213,6 @@ class _LoginPageState extends State<LoginPage> {
                     children: [
                       Text(
                         'Not a Member?',
-                        style: TextStyle(color: Colors.white),
                       ),
                       GestureDetector(
                         onTap: widget.onTap,

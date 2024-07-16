@@ -10,7 +10,7 @@
     </queries>
    <application
 
-        android:label="marketit"
+        android:label="marketit app"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

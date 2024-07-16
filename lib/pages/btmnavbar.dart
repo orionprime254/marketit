@@ -52,29 +52,35 @@ class _BottomNavBarState extends State<BottomNavBar> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentPage,
         onTap: _onTabTapped,
+        selectedItemColor: Colors.orange,
+        unselectedItemColor: Colors.grey,
         items: [
           BottomNavigationBarItem(
             icon: Icon(
               Icons.home,
-              color: Colors.orange,
+              //color: Colors.orange,
             ),
-            label: '',
+            label: 'home',
           ),
           // BottomNavigationBarItem(
           //   icon: Icon(Icons.favorite, color: Colors.orange),
           //   label: '',
           // ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.add, color: Colors.orange),
-            label: '',
+            icon: Icon(Icons.add,
+            //    color: Colors.orange
+            ),
+            label: 'sell',
           ),
           // BottomNavigationBarItem(
           //   icon: Icon(Icons.notifications, color: Colors.orange),
           //   label: '',
           // ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person, color: Colors.orange),
-            label: '',
+            icon: Icon(Icons.person,
+            //    color: Colors.orange
+            ),
+            label: 'profile',
           ),
         ],
       ),

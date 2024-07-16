@@ -35,11 +35,25 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
+        //crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Enter Your Email And We Will Send You A Reset Link',textAlign: TextAlign.center,),
+
+          Container(
+            margin: EdgeInsets.fromLTRB(25, 0, 25, 20),
+            child: Align(
+                alignment: Alignment.topLeft,
+                child: Text('Reset Password',style: TextStyle(fontWeight: FontWeight.w700,fontSize: 25),)),
+          ),
+          Container(
+            margin: EdgeInsets.fromLTRB(25, 0, 25, 20),
+            child: Align(alignment: Alignment.topLeft,
+                child: Text('Enter Your Email And We Will Send You A Reset Link',style: TextStyle(fontSize: 14,fontWeight: FontWeight.w400),)),
+          ),
+
           SizedBox(height: 14,),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 25.0),

@@ -8,7 +8,6 @@ import 'package:marketit/ads/custom_banner.dart';
 import 'package:marketit/pages/btmnavbar.dart';
 import 'package:marketit/pages/profilepage.dart';
 
-
 class SellPage extends StatefulWidget {
   const SellPage({Key? key}) : super(key: key);
 
@@ -22,7 +21,8 @@ class _SellPageState extends State<SellPage> {
   TextEditingController _titleController = TextEditingController();
   TextEditingController _descriptionController = TextEditingController();
   TextEditingController _priceController = TextEditingController();
-  final CollectionReference _items = FirebaseFirestore.instance.collection('uploads');
+  final CollectionReference _items =
+      FirebaseFirestore.instance.collection('uploads');
   String? imageUrl;
   bool _isWhatsappMissing = false;
   String? _whatsappNumber;
@@ -38,11 +38,15 @@ class _SellPageState extends State<SellPage> {
   Future<void> _getUserWhatsappNumber() async {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
-      DocumentSnapshot<Map<String, dynamic>> userDoc =
-      await FirebaseFirestore.instance.collection('Users').doc(user.email).get();
+      DocumentSnapshot<Map<String, dynamic>> userDoc = await FirebaseFirestore
+          .instance
+          .collection('Users')
+          .doc(user.email)
+          .get();
       setState(() {
         _whatsappNumber = userDoc.data()?['whatsapp'];
-        _isWhatsappMissing = _whatsappNumber == null || _whatsappNumber!.isEmpty;
+        _isWhatsappMissing =
+            _whatsappNumber == null || _whatsappNumber!.isEmpty;
       });
     }
   }
@@ -63,7 +67,7 @@ class _SellPageState extends State<SellPage> {
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
-         // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -86,10 +90,12 @@ class _SellPageState extends State<SellPage> {
                           onPressed: () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => ProfilePage()),
+                              MaterialPageRoute(
+                                  builder: (context) => ProfilePage()),
                             );
                           },
-                          child: Text('Go to Profile', style: TextStyle(color: Colors.white)),
+                          child: Text('Go to Profile',
+                              style: TextStyle(color: Colors.white)),
                         )
                       ],
                     ),
@@ -129,20 +135,29 @@ class _SellPageState extends State<SellPage> {
                 const SizedBox(height: 20),
                 _buildTextField('Title', _titleController),
                 const SizedBox(height: 20),
-                _buildTextField('Description (less than 500 words)', _descriptionController, maxLines: 5),
+                _buildTextField(
+                    'Description (less than 500 words)', _descriptionController,
+                    maxLines: 5),
                 const SizedBox(height: 20),
-                _buildTextField('Price', _priceController, keyboardType: TextInputType.number),
+                _buildTextField('Price', _priceController,
+                    keyboardType: TextInputType.number),
                 const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: _submitForm,
-                  child: Text('Submit', style: TextStyle(fontSize: 18)),
-                  style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(vertical: 14),
+                GestureDetector(
+                  onTap: _submitForm,
+                  child: Container(
+                    margin: EdgeInsets.fromLTRB(25, 0, 25, 0),
+                   decoration: BoxDecoration(
+                     color: Colors.orange,
+                     borderRadius: BorderRadius.circular(10)
+                   ),
+                    
+                    child: Container(
+                        padding: EdgeInsets.fromLTRB(0, 15, 0, 15),
+                        child: Center(child: Text('Submit', style: TextStyle(fontSize: 18)))),
                   ),
                 ),
               ],
             ),
-
             CustomBannerAd()
           ],
         ),
@@ -150,7 +165,8 @@ class _SellPageState extends State<SellPage> {
     );
   }
 
-  Widget _buildDropdownField(String label, String value, ValueChanged<String?> onChanged, List<String> items) {
+  Widget _buildDropdownField(String label, String value,
+      ValueChanged<String?> onChanged, List<String> items) {
     return DropdownButtonFormField<String>(
       decoration: InputDecoration(
         labelText: label,
@@ -158,11 +174,14 @@ class _SellPageState extends State<SellPage> {
       ),
       value: value,
       onChanged: onChanged,
-      items: items.map((item) => DropdownMenuItem(value: item, child: Text(item))).toList(),
+      items: items
+          .map((item) => DropdownMenuItem(value: item, child: Text(item)))
+          .toList(),
     );
   }
 
-  Widget _buildTextField(String label, TextEditingController controller, {int maxLines = 1, TextInputType? keyboardType}) {
+  Widget _buildTextField(String label, TextEditingController controller,
+      {int maxLines = 1, TextInputType? keyboardType}) {
     return TextFormField(
       controller: controller,
       decoration: InputDecoration(
@@ -175,7 +194,8 @@ class _SellPageState extends State<SellPage> {
   }
 
   void _pickImage() async {
-    final XFile? file = await ImagePicker().pickImage(source: ImageSource.gallery);
+    final XFile? file =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
     if (file == null) return;
 
     setState(() {
@@ -200,7 +220,10 @@ class _SellPageState extends State<SellPage> {
   void _submitForm() async {
     User? user = FirebaseAuth.instance.currentUser;
 
-    if (imageUrl == null || _titleController.text.isEmpty || _descriptionController.text.isEmpty || _priceController.text.isEmpty) {
+    if (imageUrl == null ||
+        _titleController.text.isEmpty ||
+        _descriptionController.text.isEmpty ||
+        _priceController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Please fill in all fields and upload an image.'),
       ));
@@ -247,8 +270,10 @@ class _SellPageState extends State<SellPage> {
         _selectedCondition = 'New';
       });
 
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Uploaded Successfully')));
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => BottomNavBar()));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Uploaded Successfully')));
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => BottomNavBar()));
     }
   }
 

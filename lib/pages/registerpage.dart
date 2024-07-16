@@ -76,7 +76,7 @@ class _RegisterPageState extends State<RegisterPage> {
   }
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[900],
+      backgroundColor: Theme.of(context).colorScheme.background,
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -85,14 +85,14 @@ class _RegisterPageState extends State<RegisterPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
-                    Icons.lock,
-                    size: 100,
-                  ),
+                  // Icon(
+                  //   Icons.lock,
+                  //   size: 100,
+                  // ),
                   SizedBox(
                     height: 50,
                   ),
-                  Text("Let's Create An Account For You!"),
+                  Text("Let's Create An Account For You!",style: TextStyle(fontWeight: FontWeight.w700,fontSize: 25),),
                   SizedBox(
                     height: 50,
                   ),
@@ -162,14 +162,14 @@ class _RegisterPageState extends State<RegisterPage> {
                             child: Image.asset('lib/imgs/search.png',height: 40,)),
                       ),
                       SizedBox(width: 15.0,),
-                      Container(
-                          padding: EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(16),
-                              border: Border.all(color: Colors.white),
-                              color: Colors.grey[200]
-                          ),
-                          child: Image.asset('lib/imgs/facebook.png',height: 40,)),
+                      // Container(
+                      //     padding: EdgeInsets.all(20),
+                      //     decoration: BoxDecoration(
+                      //         borderRadius: BorderRadius.circular(16),
+                      //         border: Border.all(color: Colors.white),
+                      //         color: Colors.grey[200]
+                      //     ),
+                      //     child: Image.asset('lib/imgs/facebook.png',height: 40,)),
 
                     ],
                   ),
@@ -180,7 +180,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text('Already a Member?',
-                          style: TextStyle(color: Colors.white)),
+                         ),
                       GestureDetector(
                         onTap: widget.onTap,
                         child: Text(

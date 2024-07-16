@@ -10,21 +10,23 @@ class ProductTile extends StatelessWidget {
       {super.key,
       required this.productName,
       required this.imagePath,
-       this.color,
+      required this.color,
       required this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return Column(
-
+mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Padding(
           padding: const EdgeInsets.only(left: 13.0),
           child: Container(
+
             height: 80,
             padding: EdgeInsets.all(3),
             decoration: BoxDecoration(
-              color: Colors.grey[900],
+
               borderRadius: BorderRadius.circular(20),
               //boxShadow: [
               // BoxShadow(color: Colors.grey.shade800,blurRadius: 10)
@@ -40,7 +42,8 @@ class ProductTile extends StatelessWidget {
         Text(
           productName,
           style: TextStyle(
-              fontWeight: FontWeight.w500, fontSize: 18, color: Colors.grey),
+               fontSize: 18,color: Colors.grey[700],
+              fontWeight: FontWeight.bold ),
         )
       ],
     );
