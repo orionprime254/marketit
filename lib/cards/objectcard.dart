@@ -24,7 +24,7 @@ mainAxisAlignment: MainAxisAlignment.center,
           child: Container(
 
             height: 80,
-            padding: EdgeInsets.all(3),
+            padding: const EdgeInsets.all(3),
             decoration: BoxDecoration(
 
               borderRadius: BorderRadius.circular(20),
@@ -35,7 +35,7 @@ mainAxisAlignment: MainAxisAlignment.center,
             child: Image.asset(imagePath),
           ),
         ),
-        SizedBox(
+        const SizedBox(
           height: 5,
         ),
 

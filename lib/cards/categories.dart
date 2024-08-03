@@ -11,7 +11,7 @@ import 'package:flutter/material.dart';
      return Padding(
        padding: const EdgeInsets.only(left: 20.0),
        child: Container(
-         padding: EdgeInsets.all(20),
+         padding: const EdgeInsets.all(20),
          width: 100,
          decoration: BoxDecoration(
            borderRadius: BorderRadius.circular(12),
@@ -20,14 +20,14 @@ import 'package:flutter/material.dart';
          child: Column(
            children: [
              Image.asset(imagePath),
-             SizedBox(
+             const SizedBox(
                height: 20,
              ),
              Text(
                categoryName,
                style: TextStyle(fontSize: 20, color: Colors.brown[700]),
              ),
-             SizedBox(
+             const SizedBox(
                height: 10,
              ),
 

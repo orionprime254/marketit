@@ -6,7 +6,7 @@ class MessagePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Center(child: Text('M E S S A G E S')),
+        title: const Center(child: Text('M E S S A G E S')),
       ),
     );
   }

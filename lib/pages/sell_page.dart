@@ -5,6 +5,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:marketit/ads/custom_banner.dart';
+import 'package:marketit/ads/custom_rewardads.dart';
 import 'package:marketit/pages/btmnavbar.dart';
 import 'package:marketit/pages/profilepage.dart';
 
@@ -21,11 +22,13 @@ class _SellPageState extends State<SellPage> {
   TextEditingController _titleController = TextEditingController();
   TextEditingController _descriptionController = TextEditingController();
   TextEditingController _priceController = TextEditingController();
-  final CollectionReference _items =
-      FirebaseFirestore.instance.collection('uploads');
-  String? imageUrl;
+  final CollectionReference _items = FirebaseFirestore.instance.collection('uploads');
+  List<File> _selectedImages = [];
   bool _isWhatsappMissing = false;
   String? _whatsappNumber;
+
+  CustomBannerAd customBannerAd = CustomBannerAd();
+  CustomRewardAd _rewardAd = CustomRewardAd();
 
   @override
   void dispose() {
@@ -35,26 +38,113 @@ class _SellPageState extends State<SellPage> {
     super.dispose();
   }
 
+  @override
+  void initState() {
+    super.initState();
+    _getUserWhatsappNumber();
+    _rewardAd.loadRewardedAd();
+  }
+
   Future<void> _getUserWhatsappNumber() async {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
-      DocumentSnapshot<Map<String, dynamic>> userDoc = await FirebaseFirestore
-          .instance
+      DocumentSnapshot<Map<String, dynamic>> userDoc = await FirebaseFirestore.instance
           .collection('Users')
           .doc(user.email)
           .get();
       setState(() {
         _whatsappNumber = userDoc.data()?['whatsapp'];
-        _isWhatsappMissing =
-            _whatsappNumber == null || _whatsappNumber!.isEmpty;
+        _isWhatsappMissing = _whatsappNumber == null || _whatsappNumber!.isEmpty;
       });
     }
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _getUserWhatsappNumber();
+  Future<void> _submitForm() async {
+    User? user = FirebaseAuth.instance.currentUser;
+
+    if (_selectedImages.isEmpty ||
+        _titleController.text.isEmpty ||
+        _descriptionController.text.isEmpty ||
+        _priceController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Please fill in all fields and upload an image.'),
+      ));
+      return;
+    }
+
+    if (_isWhatsappMissing) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Please add your WhatsApp number in your profile page.'),
+      ));
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const ProfilePage()),
+      );
+      return;
+    }
+
+    final String title = _titleController.text;
+    final int? price = int.tryParse(_priceController.text);
+    final String description = _descriptionController.text;
+    final String category = _selectedCategory;
+    final String condition = _selectedCondition;
+    final String whatsappNumber = _whatsappNumber!;
+
+    if (price != null) {
+      List<String> imageUrls = await _uploadImages();
+
+      // Show rewarded ad before saving the form
+      if (_rewardAd.isAdLoaded()) {
+        _rewardAd.showRewardedAd();
+        // Wait until the ad is completed
+        // You may want to wait for a result or handle this better in a production app
+        await Future.delayed(const Duration(seconds: 3));
+      }
+
+      await _items.add({
+        "Title": title,
+        "Price": price,
+        "Description": description,
+        "images": imageUrls,
+        "userId": user?.email,
+        "Condition": condition,
+        "Category": category,
+        'Likes': [],
+        'whatsapp': whatsappNumber,
+        'isSaved': false, // Add the isSaved property
+      });
+
+      _titleController.clear();
+      _priceController.clear();
+      _descriptionController.clear();
+      setState(() {
+        _selectedImages = [];
+        _selectedCategory = 'Bed';
+        _selectedCondition = 'New';
+      });
+
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('Uploaded Successfully')));
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => BottomNavBar()));
+    }
+  }
+
+  Future<List<String>> _uploadImages() async {
+    List<String> imageUrls = [];
+
+    for (File image in _selectedImages) {
+      String fileName = DateTime.now().microsecondsSinceEpoch.toString();
+      Reference referenceRoot = FirebaseStorage.instance.ref();
+      Reference referenceDireImages = referenceRoot.child('images');
+      Reference referenceImagetoUpload = referenceDireImages.child(fileName);
+
+      await referenceImagetoUpload.putFile(image);
+      String imageUrl = await referenceImagetoUpload.getDownloadURL();
+      imageUrls.add(imageUrl);
+    }
+
+    return imageUrls;
   }
 
   @override
@@ -62,25 +152,24 @@ class _SellPageState extends State<SellPage> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text('Sell Item', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text('Sell Item', style: TextStyle(fontWeight: FontWeight.bold)),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
-          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 if (_isWhatsappMissing) ...[
                   Container(
-                    padding: EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(10),
                     color: Colors.red,
                     child: Row(
                       children: [
-                        Icon(Icons.warning, color: Colors.white),
-                        SizedBox(width: 10),
-                        Expanded(
+                        const Icon(Icons.warning, color: Colors.white),
+                        const SizedBox(width: 10),
+                        const Expanded(
                           child: Text(
                             'Please add your WhatsApp number in your profile page.',
                             style: TextStyle(color: Colors.white),
@@ -91,16 +180,16 @@ class _SellPageState extends State<SellPage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => ProfilePage()),
+                                  builder: (context) => const ProfilePage()),
                             );
                           },
-                          child: Text('Go to Profile',
+                          child: const Text('Go to Profile',
                               style: TextStyle(color: Colors.white)),
                         )
                       ],
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                 ],
                 _buildDropdownField('Category', _selectedCategory, (newValue) {
                   setState(() {
@@ -121,17 +210,7 @@ class _SellPageState extends State<SellPage> {
                 const SizedBox(height: 20),
                 _buildCategorySpecificField(),
                 const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: _pickImage,
-                  child: Text('Upload Image', style: TextStyle(fontSize: 16)),
-                  style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(vertical: 12),
-                  ),
-                ),
-                if (imageUrl != null) ...[
-                  const SizedBox(height: 20),
-                  Image.file(File(imageUrl!)),
-                ],
+                _buildImagePicker(),
                 const SizedBox(height: 20),
                 _buildTextField('Title', _titleController),
                 const SizedBox(height: 20),
@@ -145,135 +224,111 @@ class _SellPageState extends State<SellPage> {
                 GestureDetector(
                   onTap: _submitForm,
                   child: Container(
-                    margin: EdgeInsets.fromLTRB(25, 0, 25, 0),
-                   decoration: BoxDecoration(
-                     color: Colors.orange,
-                     borderRadius: BorderRadius.circular(10)
-                   ),
-                    
+                    margin: const EdgeInsets.fromLTRB(25, 0, 25, 0),
+                    decoration: BoxDecoration(
+                        color: Colors.orange,
+                        borderRadius: BorderRadius.circular(10)),
                     child: Container(
-                        padding: EdgeInsets.fromLTRB(0, 15, 0, 15),
-                        child: Center(child: Text('Submit', style: TextStyle(fontSize: 18)))),
+                        padding: const EdgeInsets.fromLTRB(0, 15, 0, 15),
+                        child: const Center(child: Text('Submit', style: TextStyle(fontSize: 18)))),
                   ),
                 ),
               ],
             ),
-            CustomBannerAd()
+            const CustomBannerAd()
           ],
         ),
       ),
     );
   }
 
-  Widget _buildDropdownField(String label, String value,
-      ValueChanged<String?> onChanged, List<String> items) {
+  Widget _buildDropdownField(
+      String label, String selectedValue, ValueChanged<String?> onChanged, List<String> items) {
     return DropdownButtonFormField<String>(
+      value: selectedValue,
       decoration: InputDecoration(
         labelText: label,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
       ),
-      value: value,
       onChanged: onChanged,
-      items: items
-          .map((item) => DropdownMenuItem(value: item, child: Text(item)))
-          .toList(),
+      items: items.map<DropdownMenuItem<String>>((String value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: Text(value),
+        );
+      }).toList(),
     );
   }
 
   Widget _buildTextField(String label, TextEditingController controller,
-      {int maxLines = 1, TextInputType? keyboardType}) {
+      {TextInputType keyboardType = TextInputType.text, int maxLines = 1}) {
     return TextFormField(
       controller: controller,
       decoration: InputDecoration(
         labelText: label,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
       ),
-      maxLines: maxLines,
       keyboardType: keyboardType,
+      maxLines: maxLines,
     );
   }
 
-  void _pickImage() async {
-    final XFile? file =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
-    if (file == null) return;
-
-    setState(() {
-      imageUrl = file.path;
-    });
-
-    String fileName = DateTime.now().microsecondsSinceEpoch.toString();
-    Reference referenceRoot = FirebaseStorage.instance.ref();
-    Reference referenceDireImages = referenceRoot.child('images');
-    Reference referenceImagetoUpload = referenceDireImages.child(fileName);
-
-    try {
-      await referenceImagetoUpload.putFile(File(file.path));
-      imageUrl = await referenceImagetoUpload.getDownloadURL();
-    } catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Failed to upload image: $error'),
-      ));
-    }
+  Widget _buildImagePicker() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Wrap(
+          spacing: 10,
+          runSpacing: 10,
+          children: [
+            ..._selectedImages.map((file) => _buildImagePreview(file)).toList(),
+            if (_selectedImages.length < 4)
+              GestureDetector(
+                onTap: _pickImages,
+                child: Container(
+                  width: 100,
+                  height: 100,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: Colors.grey),
+                  ),
+                  child: const Icon(Icons.add, size: 50, color: Colors.grey),
+                ),
+              ),
+          ],
+        ),
+      ],
+    );
   }
 
-  void _submitForm() async {
-    User? user = FirebaseAuth.instance.currentUser;
+  Widget _buildImagePreview(File file) {
+    return Container(
+      width: 100,
+      height: 100,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.grey),
+        image: DecorationImage(
+          image: FileImage(file),
+          fit: BoxFit.cover,
+        ),
+      ),
+    );
+  }
 
-    if (imageUrl == null ||
-        _titleController.text.isEmpty ||
-        _descriptionController.text.isEmpty ||
-        _priceController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Please fill in all fields and upload an image.'),
-      ));
-      return;
-    }
-
-    if (_isWhatsappMissing) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Please add your WhatsApp number in your profile page.'),
-      ));
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => ProfilePage()),
-      );
-      return;
-    }
-
-    final String title = _titleController.text;
-    final int? price = int.tryParse(_priceController.text);
-    final String description = _descriptionController.text;
-    final String category = _selectedCategory;
-    final String condition = _selectedCondition;
-    final String whatsappNumber = _whatsappNumber!;
-
-    if (price != null) {
-      await _items.add({
-        "Title": title,
-        "Price": price,
-        "Description": description,
-        "image": imageUrl,
-        "userId": user?.email,
-        "Condition": condition,
-        "Category": category,
-        'Likes': [],
-        'whatsapp': whatsappNumber,
-      });
-
-      _titleController.clear();
-      _priceController.clear();
-      _descriptionController.clear();
+  Future<void> _pickImages() async {
+    final List<XFile>? files = await ImagePicker().pickMultiImage();
+    if (files != null) {
       setState(() {
-        imageUrl = null;
-        _selectedCategory = 'Bed';
-        _selectedCondition = 'New';
+        _selectedImages.addAll(files.map((file) => File(file.path)).toList());
+        if (_selectedImages.length > 4) {
+          _selectedImages = _selectedImages.sublist(0, 4);
+        }
       });
-
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Uploaded Successfully')));
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => BottomNavBar()));
     }
   }
 
@@ -351,7 +406,7 @@ class _SellPageState extends State<SellPage> {
 
   Widget _buildDropdownWithNumbers(int start, int end) {
     return DropdownButtonFormField<String>(
-      decoration: InputDecoration(labelText: 'Size'),
+      decoration: const InputDecoration(labelText: 'Size'),
       value: start.toString(),
       onChanged: (String? newValue) {
         setState(() {});

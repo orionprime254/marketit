@@ -11,9 +11,9 @@ final  void Function()? onTap;
     return Padding(
       padding: const EdgeInsets.only(left: 10.0),
       child: ListTile(
-        leading: Icon(icon,color: Colors.white,),
+        leading: Icon(icon,),
         onTap: onTap,
-        title: Text(text,style: TextStyle(color: Colors.white),),
+        title: Text(text,),
       ),
     );
   }

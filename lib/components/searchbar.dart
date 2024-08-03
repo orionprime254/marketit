@@ -19,12 +19,12 @@ class SearchBar extends StatelessWidget {
         onChanged: onChanged,
        // style: TextStyle(color: Colors.white),  // Ensure the text color is visible
         decoration: InputDecoration(
-          prefixIcon: Icon(Icons.search,
+          prefixIcon: const Icon(Icons.search,
              // color: Colors.white
           ),
           hintText: 'Search...',
         //  hintStyle: TextStyle(color: Colors.white),  // Ensure the hint text color is visible
-          focusedBorder: OutlineInputBorder(
+          focusedBorder: const OutlineInputBorder(
             borderSide: BorderSide(color: Colors.white),  // Customize the focused border color
           ),
           enabledBorder: OutlineInputBorder(

@@ -33,7 +33,7 @@ class _FurniturePageState extends State<FurniturePage> {
         backgroundColor: Colors.grey[900],
         appBar: AppBar(
           centerTitle:true,
-          title: Text('F U R N I T U R E'),
+          title: const Text('F U R N I T U R E'),
         ),
         body: StreamBuilder<QuerySnapshot>(
             stream: _stream,
@@ -44,8 +44,8 @@ class _FurniturePageState extends State<FurniturePage> {
                 );
               }
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(
-                  child: CircularProgressIndicator(),
+                return const Center(
+                  child: const CircularProgressIndicator(),
                 );
               }
               QuerySnapshot querySnapshot = snapshot.data!;
@@ -55,16 +55,16 @@ class _FurniturePageState extends State<FurniturePage> {
               // final containsBed = snapshot.data!.docs.any((doc) => (doc['Category'] as String).toLowerCase().contains("Bed"));
               //   if (containsBed){
               if (documents.isEmpty) {
-                return Center(child: Text("No furniture Uploaded"));
+                return const Center(child: Text("No furniture Uploaded"));
               }
               return SingleChildScrollView(
                   child: Column(
                     children: [
                       GridView.builder(
                         shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
+                        physics: const NeverScrollableScrollPhysics(),
                         itemCount: itemsFromFirestore.length,
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
                           crossAxisSpacing: 2,
                           mainAxisSpacing: 2,
@@ -73,13 +73,14 @@ class _FurniturePageState extends State<FurniturePage> {
                         itemBuilder: (BuildContext context, int index) {
                           Map thisItem = itemsFromFirestore[index];
                           String itemId = documents[index].id;
+                          List<String> imageUrls = List<String>.from(thisItem['images']);
                           return GestureDetector(
                             onTap: () {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => DisplayPage(
-                                    imageUrl: thisItem['image'],
+                                    imageUrls: imageUrls,
                                     name: thisItem['Title'],
                                     price: thisItem['Price'].toString(),
                                     description: thisItem['Description'],userEmail: thisItem['userId'],
@@ -110,17 +111,17 @@ class _FurniturePageState extends State<FurniturePage> {
                                       ),
                                     ),
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 5,
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.only(left: 10.0),
                                     child: Text(
                                       "${thisItem['Title']}",
-                                      style: TextStyle(fontWeight: FontWeight.bold),
+                                      style: const TextStyle(fontWeight: FontWeight.bold),
                                     ),
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 4,
                                   ),
                                   Row(
@@ -131,7 +132,7 @@ class _FurniturePageState extends State<FurniturePage> {
                                         padding: const EdgeInsets.only(left: 8.0),
                                         child: Text(
                                           "Ksh ${thisItem['Price']}",
-                                          style: TextStyle(fontSize: 13),
+                                          style: const TextStyle(fontSize: 13),
                                         ),
                                       ),
                                       // Padding(

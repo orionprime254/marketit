@@ -20,7 +20,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     try{
       await FirebaseAuth.instance.sendPasswordResetEmail(email: _emailcontroller.text.trim());
       showDialog(context: context, builder: (context){
-        return AlertDialog(
+        return const AlertDialog(
           content: Text('Password Reset Link Sent!Check Email'),
         );
       });
@@ -43,25 +43,25 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         children: [
 
           Container(
-            margin: EdgeInsets.fromLTRB(25, 0, 25, 20),
-            child: Align(
+            margin: const EdgeInsets.fromLTRB(25, 0, 25, 20),
+            child: const Align(
                 alignment: Alignment.topLeft,
                 child: Text('Reset Password',style: TextStyle(fontWeight: FontWeight.w700,fontSize: 25),)),
           ),
           Container(
-            margin: EdgeInsets.fromLTRB(25, 0, 25, 20),
-            child: Align(alignment: Alignment.topLeft,
+            margin: const EdgeInsets.fromLTRB(25, 0, 25, 20),
+            child: const Align(alignment: Alignment.topLeft,
                 child: Text('Enter Your Email And We Will Send You A Reset Link',style: TextStyle(fontSize: 14,fontWeight: FontWeight.w400),)),
           ),
 
-          SizedBox(height: 14,),
+          const SizedBox(height: 14,),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 25.0),
             child: MyTextField(controller: _emailcontroller, hintText: '', obscureText: false),
           ),
-          SizedBox(height: 14,),
+          const SizedBox(height: 14,),
           MaterialButton(onPressed: passwordReset,
-          child: Text('Reset Password'),color: Colors.orange,)
+          child: const Text('Reset Password'),color: Colors.orange,)
         ],
       ),
     );

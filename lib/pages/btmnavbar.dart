@@ -30,12 +30,12 @@ class _BottomNavBarState extends State<BottomNavBar> {
 
   void _initializePages() {
     _pages = [
-      HomePage(),
-      //SavedPage(wishlist: [],),
-      SellPage(),
+      const HomePage(),
+      SavedPage(),
+      const SellPage(),
      // NotificationPage(),
     //  MessagePage(),
-      ProfilePage()
+      const ProfilePage()
     ];
   }
 
@@ -55,18 +55,18 @@ class _BottomNavBarState extends State<BottomNavBar> {
         selectedItemColor: Colors.orange,
         unselectedItemColor: Colors.grey,
         items: [
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Icon(
               Icons.home,
               //color: Colors.orange,
             ),
             label: 'home',
           ),
-          // BottomNavigationBarItem(
-          //   icon: Icon(Icons.favorite, color: Colors.orange),
-          //   label: '',
-          // ),
           BottomNavigationBarItem(
+            icon: Icon(Icons.favorite ),
+            label: 'saved',
+          ),
+          const BottomNavigationBarItem(
             icon: Icon(Icons.add,
             //    color: Colors.orange
             ),
@@ -76,7 +76,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
           //   icon: Icon(Icons.notifications, color: Colors.orange),
           //   label: '',
           // ),
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Icon(Icons.person,
             //    color: Colors.orange
             ),

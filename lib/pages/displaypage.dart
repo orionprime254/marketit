@@ -1,17 +1,29 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:marketit/components/item_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../components/item_model.dart';
+
 class DisplayPage extends StatefulWidget {
-  final String imageUrl;
+  final List<String> imageUrls;
   final String name;
   final String price;
   final String description;
-  final String userEmail; // Added field for userEmail
+  final String userEmail;
+
 
   const DisplayPage({
-    super.key, required this.imageUrl, required this.name, required this.price, required this.description, required this.userEmail,
-  });
+    Key? key,
+    required this.imageUrls,
+    required this.name,
+    required this.price,
+    required this.description,
+    required this.userEmail,
+  }) : super(key: key);
 
   @override
   State<DisplayPage> createState() => _DisplayPageState();
@@ -39,7 +51,6 @@ class _DisplayPageState extends State<DisplayPage> {
       if (data.containsKey("whatsapp")) {
         setState(() {
           whatsappNumber = data["whatsapp"];
-          // Removing the first '0' and adding '+254' prefix
           if (whatsappNumber != null && whatsappNumber!.startsWith('0')) {
             whatsappNumber = '+254' + whatsappNumber!.substring(1);
           }
@@ -52,6 +63,8 @@ class _DisplayPageState extends State<DisplayPage> {
 
   @override
   Widget build(BuildContext context) {
+    var itemProvider = Provider.of<ItemProvider>(context);
+    bool isSaved = itemProvider.savedItems.any((item) => item.title == widget.name);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -64,18 +77,42 @@ class _DisplayPageState extends State<DisplayPage> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  //margin: EdgeInsets.fromLTRB(25, 0, 25, 30),
-                  child: Image.network(
-                    widget.imageUrl,
+                widget.imageUrls.length > 1
+                    ? CarouselSlider(
+                  options: CarouselOptions(
+                    height: 400,
+                    autoPlay: true,
+                    enlargeCenterPage: true,
+                  ),
+                  items: widget.imageUrls.map((url) {
+                    return Builder(
+                      builder: (BuildContext context) {
+                        return Container(
+                          width: MediaQuery.of(context).size.width,
+                          margin: const EdgeInsets.symmetric(horizontal: 5.0),
+                          child: CachedNetworkImage(
+                            imageUrl: url,
+                            errorWidget: (context, url, error) =>
+                            const Icon(Icons.error),
+                            fit: BoxFit.contain,
+                          ),
+                        );
+                      },
+                    );
+                  }).toList(),
+                )
+                    : Container(
+                  width: MediaQuery.of(context).size.width,
+                  margin: const EdgeInsets.symmetric(horizontal: 5.0),
+                  child: CachedNetworkImage(
+                    imageUrl: widget.imageUrls.first,
+                    errorWidget: (context, url, error) =>
+                    const Icon(Icons.error),
                     height: 400,
                     fit: BoxFit.contain,
-                    width: double.infinity,
                   ),
                 ),
-                SizedBox(
-                  height: 10,
-                ),
+                const SizedBox(height: 10),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -83,37 +120,53 @@ class _DisplayPageState extends State<DisplayPage> {
                       padding: const EdgeInsets.only(left: 20.0),
                       child: Text(
                         widget.name,
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontSize: 22, fontWeight: FontWeight.bold),
                       ),
                     ),
-                    GestureDetector(
-                      onTap: () {},
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: 25.0),
-                        child: Icon(Icons.favorite_border),
-                      ),
-                    )
+                    // GestureDetector(
+                    //   onTap: () {
+                    //     var currentItem = Item(
+                    //       //id: widget.itemId, // Use a unique ID
+                    //       title: widget.name,
+                    //       imageUrl: widget.imageUrls.first,
+                    //       price: widget.price,
+                    //       description: widget.description,
+                    //       userId: widget.userEmail, id: '',
+                    //     );
+                    //     if (isSaved) {
+                    //       itemProvider.removeItem(widget.name);
+                    //     } else {
+                    //       itemProvider.addItemToSaved(currentItem);
+                    //     }
+                    //     setState(() {});
+                    //   },
+                    //   child: Padding(
+                    //     padding: const EdgeInsets.only(right: 25.0),
+                    //     child: Icon(
+                    //       isSaved ? Icons.favorite : Icons.favorite_border,
+                    //       color: isSaved ? Colors.red : null,
+                    //     ),
+                    //   ),
+                    // )
                   ],
                 ),
                 Padding(
                   padding: const EdgeInsets.only(left: 20.0),
                   child: Text(
-                    '\Ksh ' + widget.price.toString(),
+                    'Ksh ' + widget.price.toString(),
                     style: TextStyle(
                         color: Colors.grey[100],
                         fontWeight: FontWeight.w400,
                         fontSize: 15),
                   ),
                 ),
-                SizedBox(
-                  height: 10,
-                ),
+                const SizedBox(height: 10),
                 Padding(
                   padding: const EdgeInsets.all(25.0),
                   child: Text(
                     widget.description,
-                    style: TextStyle(fontSize: 16),
+                    style: const TextStyle(fontSize: 16),
                     textAlign: TextAlign.justify,
                   ),
                 ),
@@ -139,9 +192,9 @@ class _DisplayPageState extends State<DisplayPage> {
                       child: Center(
                         child: Text(
                           whatsappNumber ?? 'Loading...',
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontSize: 22,
-                              color: Colors.black,
+                              //color: Colors.black,
                               fontWeight: FontWeight.bold),
                         ),
                       ),

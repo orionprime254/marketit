@@ -73,13 +73,14 @@ class _TvPageState extends State<TvPage> {
                         itemBuilder: (BuildContext context, int index) {
                           Map thisItem = itemsFromFirestore[index];
                           String itemId = documents[index].id;
+                          List<String> imageUrls = List<String>.from(thisItem['images']);
                           return GestureDetector(
                             onTap: () {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => DisplayPage(
-                                    imageUrl: thisItem['image'],
+                                    imageUrls: imageUrls,
                                     name: thisItem['Title'],
                                     price: thisItem['Price'].toString(),
                                     description: thisItem['Description'],userEmail: thisItem['userId'],

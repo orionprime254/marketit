@@ -1,11 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:marketit/cards/drawer_list_tile.dart';
+import 'package:marketit/components/cupertinoswitch.dart';
 
 class MyDrawer extends StatelessWidget {
-  final void Function()? onProfileTap;
+  //final void Function()? onProfileTap;
   //final void Function()? onSignOut;
-  const MyDrawer({super.key, required this.onProfileTap,
+  const MyDrawer({super.key,
    // required this.onSignOut
   });
   void signUserOut(){
@@ -33,21 +34,35 @@ class MyDrawer extends StatelessWidget {
                 onTap: () => Navigator.pop(context),
               ),
               DrawerListTile(
-                icon: Icons.person,
-                text: 'P R O F I L E',
-                onTap: onProfileTap,
+                icon: Icons.add,
+                text: 'S E L L',
+                onTap: (){}
               ),
             ],
           ),
-          Padding(
-            padding: const EdgeInsets.only(bottom: 28.0),
-            child: DrawerListTile(
+         Column(
+           children: [
+             Padding(
+               padding: const EdgeInsets.symmetric(horizontal: 25.0),
+               child: Row(
+                 children: [
+                   CupertinoSwitcher(),
+                   Text('Light/Dark Mode')
+                 ],
+               ),
+             ),
+             Padding(
+               padding: const EdgeInsets.only(bottom: 25.0),
+               child: DrawerListTile(
 
-              icon: Icons.logout,
-              text: 'L O G O U T',
-              onTap: signUserOut
-            ),
-          ),
+                   icon: Icons.logout,
+                   text: 'L O G O U T',
+                   onTap: signUserOut
+               ),
+             ),
+           ],
+         )
+
         ],
       ),
     );

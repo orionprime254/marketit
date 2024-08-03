@@ -23,7 +23,7 @@ class _CustomBannerAdState extends State<CustomBannerAd> {
         isBannerAdLoaded =  true;
       });
     }
-    ), request: AdRequest());
+    ), request: const AdRequest());
     bannerAd!.load();
   }
   @override

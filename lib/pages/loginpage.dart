@@ -29,7 +29,7 @@ class _LoginPageState extends State<LoginPage> {
   void signIn() async {
     showDialog(
         context: context,
-        builder: (context) => Center(
+        builder: (context) => const Center(
               child: CupertinoActivityIndicator(),
             ));
     try {
@@ -48,7 +48,7 @@ class _LoginPageState extends State<LoginPage> {
   void signInWithGoogle() async {
     showDialog(
         context: context,
-        builder: (context) => Center(
+        builder: (context) => const Center(
               child: CupertinoActivityIndicator(),
             ));
     try {
@@ -84,16 +84,16 @@ class _LoginPageState extends State<LoginPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.lock,
                     size: 100,
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 50,
                   ),
                   Container(
-                      margin: EdgeInsets.fromLTRB(25, 0, 25, 20),
-                      child: Align(
+                      margin: const EdgeInsets.fromLTRB(25, 0, 25, 20),
+                      child: const Align(
                           alignment: Alignment.topLeft,
                           child: Text(
                             "Welcome Back to "
@@ -102,8 +102,8 @@ class _LoginPageState extends State<LoginPage> {
                                 fontSize: 30, fontWeight: FontWeight.w700),
                           ))),
                   Container(
-                      margin: EdgeInsets.fromLTRB(25, 0, 25, 20),
-                      child: Align(
+                      margin: const EdgeInsets.fromLTRB(25, 0, 25, 20),
+                      child: const Align(
                           alignment: Alignment.topLeft,
                           child: Text(
                             'A Comrade\'s Shopping Choice',
@@ -117,21 +117,21 @@ class _LoginPageState extends State<LoginPage> {
                       controller: emailTextController,
                       hintText: 'email@gmail.com',
                       obscureText: false),
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
                   MyTextField(
                       controller: passwordTextController,
                       hintText: 'password',
                       obscureText: true),
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
                   GestureDetector(
                     onTap: () {
                       Navigator.push(context,
                           MaterialPageRoute(builder: (context) {
-                        return ForgotPasswordPage();
+                        return const ForgotPasswordPage();
                       }));
                     },
                     child: Padding(
@@ -147,14 +147,14 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
                   MyButton(
                     onTap: signIn,
                     text: 'Sign In',
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
                   Padding(
@@ -176,7 +176,7 @@ class _LoginPageState extends State<LoginPage> {
                       ],
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 30,
                   ),
                   // Row(
@@ -205,18 +205,18 @@ class _LoginPageState extends State<LoginPage> {
                   //
                   //   ],
                   // ),
-                  SizedBox(
+                  const SizedBox(
                     height: 30,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
+                      const Text(
                         'Not a Member?',
                       ),
                       GestureDetector(
                         onTap: widget.onTap,
-                        child: Text(
+                        child: const Text(
                           ' Register Now',
                           style: TextStyle(
                               fontWeight: FontWeight.bold, color: Colors.blue),

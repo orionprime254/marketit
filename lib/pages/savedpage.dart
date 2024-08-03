@@ -1,127 +1,74 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:marketit/pages/displaypage.dart';
+import 'package:provider/provider.dart';
+import '../components/item_provider.dart';
 
-import 'displaypage.dart';
 class SavedPage extends StatelessWidget {
-  final List<String> wishlist;
-  SavedPage({Key? key, required this.wishlist}) : super(key: key);
-  List<Map> wishListItems= [];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Center(child: Text('S A V E D')),
+        title: const Text('Saved Items'),
       ),
-      body:wishlist.isEmpty
-          ? Center(
-        child: Text(
-          'No liked items yet!',
-          style: TextStyle(color: Colors.white),
-        ),
-      )
-          : FutureBuilder<QuerySnapshot>(
-        future: FirebaseFirestore.instance.collection('uploads').get(),
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (snapshot.hasError) {
-            return Center(
-              child: Text("Some error occurred ${snapshot.error}"),
-            );
-          }
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          QuerySnapshot querySnapshot = snapshot.data!;
-          List<QueryDocumentSnapshot> documents = querySnapshot.docs;
-          List<Map> likedItems = documents
-              .where((doc) => wishlist.contains(doc.id))
-              .map((e) => e.data() as Map)
-              .toList();
+      body: Consumer<ItemProvider>(
+        builder: (context, itemProvider, child) {
+          var savedItems = itemProvider.savedItems;
 
-          return GridView.builder(
-            itemCount: likedItems.length,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 16,
-              mainAxisSpacing: 16,
-              childAspectRatio: 0.75,
-            ),
-            itemBuilder: (BuildContext context, int index) {
-              Map thisItem = likedItems[index];
-              return GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => DisplayPage(
-                        imageUrl: thisItem['image'],
-                        name: thisItem['Title'],
-                        price: thisItem['Price'].toString(),
-                        description: thisItem['Description'],
-                        userEmail: thisItem['userId'],
-                      ),
-                    ),
-                  );
-                },
+          if (savedItems.isEmpty) {
+            return Center(child: Text('No saved items.'));
+          }
+
+          return ListView.builder(
+            itemCount: savedItems.length,
+            itemBuilder: (context, index) {
+              var item = savedItems[index];
+
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
                 child: Container(
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    color: Colors.black54,
+                    borderRadius: BorderRadius.circular(10),
+                    color: Theme.of(context).colorScheme.primary,
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withOpacity(0.5),
                         blurRadius: 4,
-                        offset: Offset(0, 4),
+                        offset: const Offset(0, 4),
                       ),
                     ],
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.vertical(
-                          top: Radius.circular(12),
+                  child: ListTile(
+                    leading: CachedNetworkImage(
+                      imageUrl: item.imageUrl,
+                      errorWidget: (context, url, error) =>
+                          const Icon(Icons.error),
+                      // height: 50,
+                      // width: double.infinity,
+                      // fit: BoxFit.cover,
+                    ),
+                    title: Text(item.title),
+                    subtitle: Text('Ksh' + item.price),
+                    trailing: IconButton(
+                      icon: Icon(Icons.cancel),
+                      onPressed: () {
+                        itemProvider.removeItem(item.id);
+                      },
+                    ),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => DisplayPage(
+                            imageUrls: [item.imageUrl],
+                            name: item.title,
+                            price: item.price,
+                            description: item.description,
+                            userEmail: item.userId,
+                          ),
                         ),
-                        child: CachedNetworkImage(
-                          imageUrl: "${thisItem['image']}",
-                          errorWidget: (context, url, error) =>
-                              Icon(Icons.error),
-                          height: 150,
-                          width: double.infinity,
-                          fit: BoxFit.cover,
-                          alignment: FractionalOffset.center,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "${thisItem['Title']}",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                                color: Colors.white,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            SizedBox(height: 4),
-                            Text(
-                              "Ksh ${thisItem['Price']}",
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.orangeAccent,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+                      );
+                    },
                   ),
                 ),
               );
@@ -129,8 +76,6 @@ class SavedPage extends StatelessWidget {
           );
         },
       ),
-
-
     );
   }
 }

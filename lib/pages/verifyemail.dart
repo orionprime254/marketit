@@ -23,7 +23,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
     user = auth.currentUser!;
     user.sendEmailVerification();
 
-    timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       checkEmailVerified();
     });
     super.initState();

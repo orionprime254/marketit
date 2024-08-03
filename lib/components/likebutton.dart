@@ -4,7 +4,7 @@ class LikeButton extends StatelessWidget {
   final bool isLiked;
   final VoidCallback onTap;
 
-  LikeButton({Key? key, required this.isLiked, required this.onTap}) : super(key: key);
+  const LikeButton({Key? key, required this.isLiked, required this.onTap}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
