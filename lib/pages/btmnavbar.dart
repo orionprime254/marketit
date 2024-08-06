@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:marketit/pages/approvepage.dart';
 import 'package:marketit/pages/homepage.dart';
 import 'package:marketit/pages/messagespage.dart';
 import 'package:marketit/pages/notificationspage.dart';
@@ -33,7 +34,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
       const HomePage(),
       SavedPage(),
       const SellPage(),
-     // NotificationPage(),
+     AdminApprovalPage(),
     //  MessagePage(),
       const ProfilePage()
     ];
@@ -72,10 +73,10 @@ class _BottomNavBarState extends State<BottomNavBar> {
             ),
             label: 'sell',
           ),
-          // BottomNavigationBarItem(
-          //   icon: Icon(Icons.notifications, color: Colors.orange),
-          //   label: '',
-          // ),
+           BottomNavigationBarItem(
+            icon: Icon(Icons.admin_panel_settings, ),
+             label: 'admin',
+           ),
           const BottomNavigationBarItem(
             icon: Icon(Icons.person,
             //    color: Colors.orange

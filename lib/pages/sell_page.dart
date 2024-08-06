@@ -22,7 +22,7 @@ class _SellPageState extends State<SellPage> {
   TextEditingController _titleController = TextEditingController();
   TextEditingController _descriptionController = TextEditingController();
   TextEditingController _priceController = TextEditingController();
-  final CollectionReference _items = FirebaseFirestore.instance.collection('uploads');
+  final CollectionReference _pendingitems = FirebaseFirestore.instance.collection('pending_items');
   List<File> _selectedImages = [];
   bool _isWhatsappMissing = false;
   String? _whatsappNumber;
@@ -101,7 +101,7 @@ class _SellPageState extends State<SellPage> {
         await Future.delayed(const Duration(seconds: 3));
       }
 
-      await _items.add({
+      await _pendingitems.add({
         "Title": title,
         "Price": price,
         "Description": description,
@@ -109,9 +109,10 @@ class _SellPageState extends State<SellPage> {
         "userId": user?.email,
         "Condition": condition,
         "Category": category,
-        'Likes': [],
+        //'Likes': [],
         'whatsapp': whatsappNumber,
-        'isSaved': false, // Add the isSaved property
+
+        'isApproved':false,// Add the isSaved property
       });
 
       _titleController.clear();

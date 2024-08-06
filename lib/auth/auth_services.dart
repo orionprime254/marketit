@@ -1,11 +1,15 @@
 import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthService {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
   Future<UserCredential?> signInWithGoogle() async {
     try {
-      // Begin interactive sign in process
+      // Begin interactive sign-in process
       final GoogleSignInAccount? gUser = await GoogleSignIn().signIn();
       if (gUser == null) {
         // If the sign-in process was canceled by the user
@@ -25,7 +29,21 @@ class AuthService {
       );
 
       // Finally, sign in
-      return await FirebaseAuth.instance.signInWithCredential(credential);
+      UserCredential userCredential = await _auth.signInWithCredential(credential);
+      User? user = userCredential.user;
+
+      // Store user data to Firestore
+      if (user != null) {
+        await _firestore.collection('Users').doc(userCredential.user!.email).set({
+  //        'uid': user.uid,
+//'email': user.email,
+          'email':userCredential.user!.email,
+          //'displayName': user.displayName,
+          //'photoURL': user.photoURL,
+        }, SetOptions(merge: true)); // Merge to avoid overwriting existing data
+      }
+
+      return userCredential;
     } on SocketException catch (_) {
       // Handle network errors
       throw FirebaseAuthException(
@@ -43,4 +61,9 @@ class AuthService {
       );
     }
   }
+
+  // Future<void> signOut() async {
+  //   await GoogleSignIn().signOut();
+  //   await _auth.signOut();
+  // }
 }

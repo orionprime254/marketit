@@ -166,7 +166,7 @@ class _LoginPageState extends State<LoginPage> {
                           thickness: 0.5,
                           color: Colors.grey[400],
                         )),
-                       // Text('Or Continue with'),
+                        Text('Or Continue with'),
                         Expanded(
                           child: Divider(
                             thickness: 0.5,
@@ -179,32 +179,32 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(
                     height: 30,
                   ),
-                  // Row(
-                  //   mainAxisAlignment: MainAxisAlignment.center,
-                  //   children: [
-                  //     GestureDetector(
-                  //       onTap: ()=>AuthService().signInWithGoogle(),
-                  //       child: Container(
-                  //           padding: EdgeInsets.all(20),
-                  //           decoration: BoxDecoration(
-                  //               borderRadius: BorderRadius.circular(16),
-                  //               border: Border.all(color: Colors.white),
-                  //               color: Colors.grey[200]
-                  //           ),
-                  //           child: Image.asset('lib/imgs/search.png',height: 40,)),
-                  //     ),
-                  //     SizedBox(width: 15.0,),
-                  //     Container(
-                  //         padding: EdgeInsets.all(20),
-                  //         decoration: BoxDecoration(
-                  //             borderRadius: BorderRadius.circular(16),
-                  //             border: Border.all(color: Colors.white),
-                  //             color: Colors.grey[200]
-                  //         ),
-                  //         child: Image.asset('lib/imgs/facebook.png',height: 40,)),
-                  //
-                  //   ],
-                  // ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      GestureDetector(
+                        onTap: ()=>AuthService().signInWithGoogle(),
+                        child: Container(
+                            padding: EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(color: Colors.white),
+                                color: Colors.grey[200]
+                            ),
+                            child: Image.asset('lib/imgs/search.png',height: 40,)),
+                      ),
+                      SizedBox(width: 15.0,),
+                      // Container(
+                      //     padding: EdgeInsets.all(20),
+                      //     decoration: BoxDecoration(
+                      //         borderRadius: BorderRadius.circular(16),
+                      //         border: Border.all(color: Colors.white),
+                      //         color: Colors.grey[200]
+                      //     ),
+                      //     child: Image.asset('lib/imgs/facebook.png',height: 40,)),
+
+                    ],
+                  ),
                   const SizedBox(
                     height: 30,
                   ),

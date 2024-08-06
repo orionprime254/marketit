@@ -1,19 +1,35 @@
+
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:marketit/cards/drawer_list_tile.dart';
 import 'package:marketit/components/cupertinoswitch.dart';
+import 'package:marketit/pages/loginpage.dart';
 
-class MyDrawer extends StatelessWidget {
+class MyDrawer extends StatefulWidget {
   //final void Function()? onProfileTap;
   //final void Function()? onSignOut;
   const MyDrawer({super.key,
    // required this.onSignOut
   });
-  void signUserOut(){
-    FirebaseAuth.instance.signOut();
 
+  @override
+  State<MyDrawer> createState() => _MyDrawerState();
+}
+
+class _MyDrawerState extends State<MyDrawer> {
+  void signUserOut()async{
+     await FirebaseAuth.instance.signOut();
+     await GoogleSignIn().disconnect();
+    //Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>LoginPage()));
+     Navigator.push(
+       context,
+       MaterialPageRoute(builder: (context) => const LoginPage()),
+     );
   }
 
+  // void signUserOut() {
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -46,7 +62,9 @@ class MyDrawer extends StatelessWidget {
                padding: const EdgeInsets.symmetric(horizontal: 25.0),
                child: Row(
                  children: [
-                   CupertinoSwitcher(),
+                   Container(
+                     height: 20,
+                       child: CupertinoSwitcher()),
                    Text('Light/Dark Mode')
                  ],
                ),
