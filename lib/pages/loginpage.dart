@@ -1,6 +1,7 @@
 //import 'package:campomart/components/button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_fonts/google_fonts.dart';
+
+import 'package:lottie/lottie.dart';
 import 'package:marketit/auth/auth_services.dart';
 import 'package:marketit/components/textfield.dart';
 
@@ -54,13 +55,16 @@ class _LoginPageState extends State<LoginPage> {
     try {
       final userCredential = await AuthService().signInWithGoogle();
       if (userCredential != null) {
-        if (context.mounted) Navigator.pop(context);
+
         Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => BottomNavBar()));
+        if (context.mounted) Navigator.pop(context);
       }
     } on FirebaseAuthException catch (e) {
-      Navigator.pop(context);
+     // Navigator.pop(context);
       displayMessage(e.code);
+      Navigator.pop(context);
+
     }
   }
 
@@ -84,10 +88,11 @@ class _LoginPageState extends State<LoginPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(
-                    Icons.lock,
-                    size: 100,
-                  ),
+                  // const Icon(
+                  //   Icons.lock,
+                  //   size: 100,
+                  // ),
+                  Lottie.asset('lib/animations/welcome.json'),
                   const SizedBox(
                     height: 50,
                   ),
@@ -141,7 +146,7 @@ class _LoginPageState extends State<LoginPage> {
                         children: [
                           Text(
                             'Forgot Password',
-                            style: TextStyle(color: Colors.grey[900]),
+
                           ),
                         ],
                       ),

@@ -29,15 +29,19 @@ class AuthService {
       );
 
       // Finally, sign in
-      UserCredential userCredential = await _auth.signInWithCredential(credential);
+      UserCredential userCredential =
+          await _auth.signInWithCredential(credential);
       User? user = userCredential.user;
 
       // Store user data to Firestore
       if (user != null) {
-        await _firestore.collection('Users').doc(userCredential.user!.email).set({
-  //        'uid': user.uid,
+        await _firestore
+            .collection('Users')
+            .doc(userCredential.user!.email)
+            .set({
+          //        'uid': user.uid,
 //'email': user.email,
-          'email':userCredential.user!.email,
+          'email': userCredential.user!.email,
           //'displayName': user.displayName,
           //'photoURL': user.photoURL,
         }, SetOptions(merge: true)); // Merge to avoid overwriting existing data
@@ -62,8 +66,8 @@ class AuthService {
     }
   }
 
-  // Future<void> signOut() async {
-  //   await GoogleSignIn().signOut();
-  //   await _auth.signOut();
-  // }
+// Future<void> signOut() async {
+//   await GoogleSignIn().signOut();
+//   await _auth.signOut();
+// }
 }

@@ -3,11 +3,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:marketit/ads/custom_banner.dart';
 import 'package:marketit/ads/custom_rewardads.dart';
+import 'package:marketit/components/textbox.dart';
 import 'package:marketit/pages/btmnavbar.dart';
+import 'package:marketit/pages/pending_approve.dart';
 import 'package:marketit/pages/profilepage.dart';
+import 'package:marketit/pages/uploadingprogress.dart';
 
 class SellPage extends StatefulWidget {
   const SellPage({Key? key}) : super(key: key);
@@ -26,6 +31,8 @@ class _SellPageState extends State<SellPage> {
   List<File> _selectedImages = [];
   bool _isWhatsappMissing = false;
   String? _whatsappNumber;
+  bool _isUploading = false;
+  double _uploadProgress = 0;
 
   CustomBannerAd customBannerAd = CustomBannerAd();
   CustomRewardAd _rewardAd = CustomRewardAd();
@@ -37,12 +44,45 @@ class _SellPageState extends State<SellPage> {
     _priceController.dispose();
     super.dispose();
   }
+  // Define category-specific hints
+  Map<String, String> categoryHints = {
+    'Bed': 'e.g. 3.5 by 6, comes with drawer',
+    'Computers & Hardware': 'e.g. i5 6th gen, 8GB DDR4, 500GB SSD, 14 inch display',
+    'Stereos': 'e.g. 3.1 channel, 3 CD changer',
+    "Phone & Accesories":'e.g earphones,chargers,screen protectors for different models',
+    'Rentals':'e.g Bedsitter/sngle rooms near galilaya,westgate,pasgat',
+    'Tv':'32 inch smart tv,sony brand',
+    'Gas':'half full keygas,refill and free delivery',
+    'Furniture':'study table,office chair',
+    'Clothes':'XL,Tshirt,size 40 shoes',
+    'Services':'KRA returns,laundry,bodaboda',
+    'Food':''
+
+    // Add more categories as needed
+  };
 
   @override
   void initState() {
     super.initState();
     _getUserWhatsappNumber();
     _rewardAd.loadRewardedAd();
+    _requestLocationPermission();
+  }
+  Future<void> _requestLocationPermission() async {
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        // Permissions are denied, next time you could try
+        // requesting permissions again (this is also where
+        // Android's shouldShowRequestPermissionRationale
+        // returned true. According to Android guidelines
+        // your App should show an explanatory UI now.
+      }
+    }
+    if (permission == LocationPermission.deniedForever) {
+      // Permissions are denied forever, handle appropriately.
+    }
   }
 
   Future<void> _getUserWhatsappNumber() async {
@@ -91,15 +131,61 @@ class _SellPageState extends State<SellPage> {
     final String whatsappNumber = _whatsappNumber!;
 
     if (price != null) {
-      List<String> imageUrls = await _uploadImages();
+      setState(() {
+        _isUploading = true;
+      });
 
-      // Show rewarded ad before saving the form
-      if (_rewardAd.isAdLoaded()) {
-        _rewardAd.showRewardedAd();
-        // Wait until the ad is completed
-        // You may want to wait for a result or handle this better in a production app
-        await Future.delayed(const Duration(seconds: 3));
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => UploadProgressPage(
+            progress: 0,
+            errorMessage: null,
+            isSuccess: false,
+          ),
+        ),
+      );
+
+      List<String> imageUrls;
+      try {
+        imageUrls = await _uploadImages(
+          onProgress: (progress) {
+            setState(() {
+              _uploadProgress = progress;
+            });
+            // Update the progress on the UploadProgressPage
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => UploadProgressPage(
+                  progress: _uploadProgress,
+                  errorMessage: null,
+                  isSuccess: false,
+                ),
+              ),
+            );
+          },
+        );
+      } catch (e) {
+        // Handle the error by showing it on the UploadProgressPage
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => UploadProgressPage(
+              progress: _uploadProgress,
+              errorMessage: e.toString(),
+              isSuccess: false,
+            ),
+          ),
+        );
+        return;
       }
+      // Get the user's location
+      Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      List<Placemark> placemarks = await placemarkFromCoordinates(position.latitude, position.longitude);
+      String county = placemarks[0].locality ?? 'Unknown';
+
+
 
       await _pendingitems.add({
         "Title": title,
@@ -107,12 +193,11 @@ class _SellPageState extends State<SellPage> {
         "Description": description,
         "images": imageUrls,
         "userId": user?.email,
-        "Condition": condition,
-        "Category": category,
-        //'Likes': [],
-        'whatsapp': whatsappNumber,
 
-        'isApproved':false,// Add the isSaved property
+        "Category": category,
+        'whatsapp': whatsappNumber,
+        'isApproved': false,
+        'county':county,
       });
 
       _titleController.clear();
@@ -121,36 +206,56 @@ class _SellPageState extends State<SellPage> {
       setState(() {
         _selectedImages = [];
         _selectedCategory = 'Bed';
-        _selectedCondition = 'New';
+
+        _isUploading = false;
+        _uploadProgress = 0;
       });
 
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('Uploaded Successfully')));
+      // Update the progress page to show success
       Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => BottomNavBar()));
+        context,
+        MaterialPageRoute(
+          builder: (context) => UploadProgressPage(
+            progress: 1.0,
+            errorMessage: null,
+            isSuccess: true,
+          ),
+        ),
+      );
     }
   }
 
-  Future<List<String>> _uploadImages() async {
+  Future<List<String>> _uploadImages({required Function(double) onProgress}) async {
     List<String> imageUrls = [];
 
-    for (File image in _selectedImages) {
+    for (int i = 0; i < _selectedImages.length; i++) {
+      File image = _selectedImages[i];
       String fileName = DateTime.now().microsecondsSinceEpoch.toString();
       Reference referenceRoot = FirebaseStorage.instance.ref();
       Reference referenceDireImages = referenceRoot.child('images');
       Reference referenceImagetoUpload = referenceDireImages.child(fileName);
 
-      await referenceImagetoUpload.putFile(image);
-      String imageUrl = await referenceImagetoUpload.getDownloadURL();
-      imageUrls.add(imageUrl);
+      UploadTask uploadTask = referenceImagetoUpload.putFile(image);
+
+      uploadTask.snapshotEvents.listen((TaskSnapshot snapshot) {
+        double progress = (snapshot.bytesTransferred.toDouble() / snapshot.totalBytes.toDouble()) * (i + 1) / _selectedImages.length;
+        onProgress(progress);
+      });
+
+      await uploadTask.whenComplete(() async {
+        String imageUrl = await referenceImagetoUpload.getDownloadURL();
+        imageUrls.add(imageUrl);
+      });
     }
 
     return imageUrls;
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
         centerTitle: true,
         title: const Text('Sell Item', style: TextStyle(fontWeight: FontWeight.bold)),
@@ -201,6 +306,7 @@ class _SellPageState extends State<SellPage> {
                   'Computers & Hardware',
                   'Stereos',
                   'Phones & Accessories',
+                  'Rentals',
                   'TV',
                   'Gas',
                   'Furniture',
@@ -211,6 +317,8 @@ class _SellPageState extends State<SellPage> {
                 const SizedBox(height: 20),
                 _buildCategorySpecificField(),
                 const SizedBox(height: 20),
+                Text('Pick 4 images'),
+                SizedBox(height: 10,),
                 _buildImagePicker(),
                 const SizedBox(height: 20),
                 _buildTextField('Title', _titleController),
@@ -221,8 +329,16 @@ class _SellPageState extends State<SellPage> {
                 const SizedBox(height: 20),
                 _buildTextField('Price', _priceController,
                     keyboardType: TextInputType.number),
+                //MyTextBox(text:  user?['whatsapp'] ?? '', sectionName:  'Whatsapp Phone Number', onPressed: (){}),
                 const SizedBox(height: 20),
-                GestureDetector(
+                _isUploading
+                    ? Column(
+                  children: [
+                    //LinearProgressIndicator(value: _uploadProgress),
+                    const SizedBox(height: 20),
+                  ],
+                )
+                    : GestureDetector(
                   onTap: _submitForm,
                   child: Container(
                     margin: const EdgeInsets.fromLTRB(25, 0, 25, 0),
@@ -231,7 +347,8 @@ class _SellPageState extends State<SellPage> {
                         borderRadius: BorderRadius.circular(10)),
                     child: Container(
                         padding: const EdgeInsets.fromLTRB(0, 15, 0, 15),
-                        child: const Center(child: Text('Submit', style: TextStyle(fontSize: 18)))),
+                        child: const Center(
+                            child: Text('Submit', style: TextStyle(fontSize: 18)))),
                   ),
                 ),
               ],
@@ -240,6 +357,7 @@ class _SellPageState extends State<SellPage> {
           ],
         ),
       ),
+
     );
   }
 
@@ -307,19 +425,59 @@ class _SellPageState extends State<SellPage> {
   }
 
   Widget _buildImagePreview(File file) {
-    return Container(
-      width: 100,
-      height: 100,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.grey),
-        image: DecorationImage(
-          image: FileImage(file),
-          fit: BoxFit.cover,
+    return Stack(
+      children: [
+        Container(
+          width: 100,
+          height: 100,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            image: DecorationImage(
+              image: FileImage(file),
+              fit: BoxFit.cover,
+            ),
+          ),
         ),
-      ),
+        Positioned(
+          top: 5,
+          right: 5,
+          child: GestureDetector(
+            onTap: () => _removeImage(file),
+            child: Container(
+              padding: const EdgeInsets.all(5),
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.6),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: const Icon(Icons.cancel, color: Colors.white, size: 20),
+            ),
+          ),
+        ),
+      ],
     );
   }
+
+  void _removeImage(File file) {
+    setState(() {
+      _selectedImages.remove(file);
+    });
+  }
+
+
+  // Widget _buildImagePreview(File file) {
+  //   return Container(
+  //     width: 100,
+  //     height: 100,
+  //     decoration: BoxDecoration(
+  //       borderRadius: BorderRadius.circular(10),
+  //       border: Border.all(color: Colors.grey),
+  //       image: DecorationImage(
+  //         image: FileImage(file),
+  //         fit: BoxFit.cover,
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Future<void> _pickImages() async {
     final List<XFile>? files = await ImagePicker().pickMultiImage();
@@ -338,23 +496,21 @@ class _SellPageState extends State<SellPage> {
       case 'Bed':
         return Row(
           children: [
-            Expanded(child: _buildDropdownWithNumbers(2, 6)),
-            const SizedBox(width: 20),
-            Expanded(child: _buildDropdownWithNumbers(5, 7)),
+
           ],
         );
       case 'Computers & Hardware':
       case 'Phones & Accessories':
-        return _buildShortDescriptionField();
+        return Container();
       case 'TV':
-        return _buildNumberField('Screen size (inches)');
+        return Container();
       case 'Food':
-        return _buildNumberField('Food in Kg/Pieces');
+        return Container();
       case 'Gas':
       case 'Furniture':
-        return _buildShortDescriptionField();
+        return Container();
       case 'Clothes':
-        return _buildSizeField();
+        return Container();
       default:
         return Container();
     }
@@ -390,20 +546,7 @@ class _SellPageState extends State<SellPage> {
     );
   }
 
-  Widget _buildSizeField() {
-    return SizedBox(
-      width: double.infinity,
-      child: TextFormField(
-        decoration: InputDecoration(
-          labelText: 'Size',
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          hintText: 'e.g. S, M, L, XL',
-        ),
-      ),
-    );
-  }
+
 
   Widget _buildDropdownWithNumbers(int start, int end) {
     return DropdownButtonFormField<String>(

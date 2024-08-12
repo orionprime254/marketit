@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 
 import '../auth/auth_services.dart';
 import '../components/button.dart';
@@ -43,7 +44,7 @@ class _RegisterPageState extends State<RegisterPage> {
           .doc(userCredential.user!.email)
           .set({
         'username': emailTextController.text.split('@')[0],
-        'about': 'empty'
+
       });
       if (this.mounted) Navigator.pop(context);
     } on FirebaseAuthException catch (e) {
@@ -89,6 +90,8 @@ class _RegisterPageState extends State<RegisterPage> {
                   //   Icons.lock,
                   //   size: 100,
                   // ),
+                  //Image.asset('lib/imgs/open-enrollment.png'),
+                  Lottie.asset('lib/imgs/welcome.json'),
                   SizedBox(
                     height: 50,
                   ),

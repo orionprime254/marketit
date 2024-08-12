@@ -1,6 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:marketit/pages/homepage.dart';
 
 import '../cards/goods.dart';
 import '../cards/goodtile.dart';
@@ -30,7 +32,7 @@ class _ClothesPageState extends State<ClothesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.grey[900],
+        backgroundColor: Theme.of(context).colorScheme.background,
         appBar: AppBar(
           centerTitle:true,
           title: const Text('C L O T H E S'),
@@ -45,7 +47,9 @@ class _ClothesPageState extends State<ClothesPage> {
               }
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(
-                  child: const CircularProgressIndicator(),
+                  child: const Center(
+                    child: CupertinoActivityIndicator(),
+                  ),
                 );
               }
               QuerySnapshot querySnapshot = snapshot.data!;
@@ -60,15 +64,15 @@ class _ClothesPageState extends State<ClothesPage> {
               return SingleChildScrollView(
                   child: Column(
                     children: [
+
                       GridView.builder(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         itemCount: itemsFromFirestore.length,
                         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
-                          crossAxisSpacing: 2,
-                          mainAxisSpacing: 2,
-                          mainAxisExtent: 200,
+                          mainAxisSpacing: 10,
+                          childAspectRatio: 0.75,
                         ),
                         itemBuilder: (BuildContext context, int index) {
                           Map thisItem = itemsFromFirestore[index];
@@ -88,72 +92,11 @@ class _ClothesPageState extends State<ClothesPage> {
                                 ),
                               );
                             },
-                            child: Container(
-                              height: 300,
-                              width: 200,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(12),
-                                  color: Colors.black54),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  ClipRRect(
-                                    child: AspectRatio(
-                                      aspectRatio: 16 / 9,
-                                      child: Image.network(
-                                        "${thisItem['image']}",
-                                        //errorWidget: (context, url, error) => Icon(Icons.error),
-                                        height: 100,
-                                        width: double.infinity,
-                                        fit: BoxFit.cover,
-                                        alignment: FractionalOffset.center,
-                                        //imageUrl:  "${thisItem['image']}",
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    height: 5,
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 10.0),
-                                    child: Text(
-                                      "${thisItem['Title']}",
-                                      style: const TextStyle(fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    height: 4,
-                                  ),
-                                  Row(
-                                    mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.only(left: 8.0),
-                                        child: Text(
-                                          "Ksh ${thisItem['Price']}",
-                                          style: const TextStyle(fontSize: 13),
-                                        ),
-                                      ),
-                                      // Padding(
-                                      //   padding: const EdgeInsets.only(right: 10.0),
-                                      //   child: IconButton(
-                                      //     onPressed: () {
-                                      //       toggleWishlist(itemId);
-                                      //     },
-                                      //     icon: wishlist.contains(itemId)
-                                      //         ? Icon(
-                                      //       Icons.favorite,
-                                      //       color: Colors.red,
-                                      //     )
-                                      //         : Icon(Icons.favorite_border),
-                                      //   ),
-                                      // )
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
+                            child: ProductContainer(
+                                imageUrls: imageUrls,
+                                thisItem: thisItem,
+                                itemId: itemId
+                            )
                           );
                         },
                       )

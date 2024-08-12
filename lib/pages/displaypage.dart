@@ -2,8 +2,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:lottie/lottie.dart';
 import 'package:marketit/components/item_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:share/share.dart';
+//import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../components/item_model.dart';
@@ -29,7 +32,11 @@ class DisplayPage extends StatefulWidget {
   State<DisplayPage> createState() => _DisplayPageState();
 }
 
-class _DisplayPageState extends State<DisplayPage> {
+class _DisplayPageState extends State<DisplayPage> with SingleTickerProviderStateMixin{
+  //animation controller
+ late AnimationController  _animationController;
+ //initialize animation controller
+ 
   Uri? whatsapp;
   Uri? phoneNumber;
   String? whatsappNumber;
@@ -38,6 +45,7 @@ class _DisplayPageState extends State<DisplayPage> {
   void initState() {
     super.initState();
     fetchWhatsappNumber();
+    _animationController = AnimationController(vsync: this,duration: (Durations.short1));
   }
 
   Future<void> fetchWhatsappNumber() async {
@@ -66,9 +74,16 @@ class _DisplayPageState extends State<DisplayPage> {
     var itemProvider = Provider.of<ItemProvider>(context);
     bool isSaved = itemProvider.savedItems.any((item) => item.title == widget.name);
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
+        // actions: [
+        //   IconButton(onPressed: (){Share.share('Check out this item ${widget.name} for Ksh ${widget.price}');}, icon: Padding(
+        //     padding: const EdgeInsets.only(right: 20.0),
+        //     child: Icon(Icons.share),
+        //   ))
+        // ],
       ),
       body: SafeArea(
         child: Column(
@@ -80,9 +95,10 @@ class _DisplayPageState extends State<DisplayPage> {
                 widget.imageUrls.length > 1
                     ? CarouselSlider(
                   options: CarouselOptions(
-                    height: 400,
+                    height: 500,
                     autoPlay: true,
                     enlargeCenterPage: true,
+
                   ),
                   items: widget.imageUrls.map((url) {
                     return Builder(
@@ -108,7 +124,7 @@ class _DisplayPageState extends State<DisplayPage> {
                     imageUrl: widget.imageUrls.first,
                     errorWidget: (context, url, error) =>
                     const Icon(Icons.error),
-                    height: 400,
+                    height: 500,
                     fit: BoxFit.contain,
                   ),
                 ),
@@ -124,43 +140,21 @@ class _DisplayPageState extends State<DisplayPage> {
                             fontSize: 22, fontWeight: FontWeight.bold),
                       ),
                     ),
-                    // GestureDetector(
-                    //   onTap: () {
-                    //     var currentItem = Item(
-                    //       //id: widget.itemId, // Use a unique ID
-                    //       title: widget.name,
-                    //       imageUrl: widget.imageUrls.first,
-                    //       price: widget.price,
-                    //       description: widget.description,
-                    //       userId: widget.userEmail, id: '',
-                    //     );
-                    //     if (isSaved) {
-                    //       itemProvider.removeItem(widget.name);
-                    //     } else {
-                    //       itemProvider.addItemToSaved(currentItem);
-                    //     }
-                    //     setState(() {});
-                    //   },
-                    //   child: Padding(
-                    //     padding: const EdgeInsets.only(right: 25.0),
-                    //     child: Icon(
-                    //       isSaved ? Icons.favorite : Icons.favorite_border,
-                    //       color: isSaved ? Colors.red : null,
-                    //     ),
-                    //   ),
-                    // )
+
                   ],
                 ),
+                SizedBox(height: 10,),
                 Padding(
                   padding: const EdgeInsets.only(left: 20.0),
                   child: Text(
                     'Ksh ' + widget.price.toString(),
                     style: TextStyle(
-                        color: Colors.grey[100],
+                        //color: Colors.grey[100],
                         fontWeight: FontWeight.w400,
                         fontSize: 15),
                   ),
                 ),
+
                 const SizedBox(height: 10),
                 Padding(
                   padding: const EdgeInsets.all(25.0),
@@ -172,8 +166,10 @@ class _DisplayPageState extends State<DisplayPage> {
                 ),
               ],
             ),
+          SizedBox(height: 20,),
+          //  Divider(color: Colors.grey,),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Padding(
                   padding: const EdgeInsets.only(left: 20.0),
@@ -187,15 +183,22 @@ class _DisplayPageState extends State<DisplayPage> {
                       width: MediaQuery.of(context).size.width / 1.5,
                       height: 60,
                       decoration: BoxDecoration(
-                          color: Colors.orange,
-                          borderRadius: BorderRadius.circular(20)),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: Colors.grey),
+                          //color: Colors.grey[200]
+                      ),
                       child: Center(
-                        child: Text(
-                          whatsappNumber ?? 'Loading...',
-                          style: const TextStyle(
-                              fontSize: 22,
-                              //color: Colors.black,
-                              fontWeight: FontWeight.bold),
+                        child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Lottie.asset('lib/animations/call.json'),
+                            Text(
+                              whatsappNumber ?? 'Loading...',
+                              style: const TextStyle(
+                                  fontSize: 22,
+                                  //color: Colors.black,
+                                  ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
@@ -210,10 +213,11 @@ class _DisplayPageState extends State<DisplayPage> {
                   child: Container(
                       width: MediaQuery.of(context).size.width / 5,
                       height: 60,
-                      child: Image.asset('lib/imgs/whatsapp.png', height: 40)),
+                      child: Lottie.asset('lib/animations/whatsapp.json', height: 40)),
                 ),
               ],
-            )
+            ),
+            SizedBox(height: 20,)
           ],
         ),
       ),

@@ -1,5 +1,3 @@
-
-
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -7,32 +5,43 @@ import 'package:marketit/auth/auth.dart';
 import 'package:marketit/components/item_provider.dart';
 import 'package:marketit/components/theme_provider.dart';
 import 'package:marketit/firebase_options.dart';
+import 'package:marketit/pages/SplashSceen.dart';
+import 'package:marketit/pages/onboarding_screen.dart';
 import 'package:marketit/theme/theme.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   MobileAds.instance.initialize();
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  bool? isOnboardingComplete = prefs.getBool('onboardingComplete');
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(ChangeNotifierProvider(
-    create: (context) => ThemeProvider(),
-    child: const MyApp(),
-  ));
+  runApp(MyApp(isOnboardingComplete: isOnboardingComplete));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  final bool? isOnboardingComplete;
+
+  const MyApp({Key? key, this.isOnboardingComplete}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(create: (context)=> ItemProvider(),
-    child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        home: const AuthPage(),
-        themeMode: ThemeMode.system,
-        theme: Provider.of<ThemeProvider>(context).themeData
-
-      //darkTheme: darkMode,
-    ),);
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => ThemeProvider()),
+        ChangeNotifierProvider(create: (context) => ItemProvider()),
+      ],
+      child: Consumer<ThemeProvider>(
+        builder: (context, themeProvider, child) {
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            home: isOnboardingComplete == true ? SplashScreen() : OnBoardingScreen(),
+            themeMode: ThemeMode.system,
+            theme: themeProvider.themeData,
+          );
+        },
+      ),
+    );
   }
 }

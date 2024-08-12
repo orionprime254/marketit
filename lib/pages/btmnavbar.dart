@@ -34,9 +34,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
       const HomePage(),
       SavedPage(),
       const SellPage(),
-     AdminApprovalPage(),
-    //  MessagePage(),
-      const ProfilePage()
+    AdminApprovalPage(),
+          const ProfilePage()
     ];
   }
 
@@ -73,10 +72,10 @@ class _BottomNavBarState extends State<BottomNavBar> {
             ),
             label: 'sell',
           ),
-           BottomNavigationBarItem(
-            icon: Icon(Icons.admin_panel_settings, ),
-             label: 'admin',
-           ),
+            BottomNavigationBarItem(
+             icon: Icon(Icons.admin_panel_settings, ),
+              label: 'admin',
+            ),
           const BottomNavigationBarItem(
             icon: Icon(Icons.person,
             //    color: Colors.orange

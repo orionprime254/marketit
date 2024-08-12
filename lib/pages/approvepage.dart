@@ -122,7 +122,14 @@ class _AdminApprovalPageState extends State<AdminApprovalPage> {
                                   },
                                 ),
                               ],
-                            )
+                            ),
+                            Text(
+                              "${item['Category']}",
+                              style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey[700],
+                                  fontWeight: FontWeight.bold),
+                            ),
                           ],
                         ),
                       ),
