@@ -66,6 +66,7 @@ dependencies:
 
   share: ^2.0.4
   get: ^4.6.6
+  firebase_messaging: ^14.7.19
 
 
 dev_dependencies:

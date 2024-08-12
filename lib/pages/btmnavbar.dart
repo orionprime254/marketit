@@ -35,6 +35,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
       SavedPage(),
       const SellPage(),
     AdminApprovalPage(),
+      NotificationPage(),
           const ProfilePage()
     ];
   }
@@ -76,6 +77,10 @@ class _BottomNavBarState extends State<BottomNavBar> {
              icon: Icon(Icons.admin_panel_settings, ),
               label: 'admin',
             ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.notifications, ),
+            label: 'notifications',
+          ),
           const BottomNavigationBarItem(
             icon: Icon(Icons.person,
             //    color: Colors.orange

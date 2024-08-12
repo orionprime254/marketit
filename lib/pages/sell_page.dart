@@ -277,7 +277,7 @@ class _SellPageState extends State<SellPage> {
                         const SizedBox(width: 10),
                         const Expanded(
                           child: Text(
-                            'Please add your WhatsApp number in your profile page.',
+                            'Please add your correct WhatsApp number in your profile page for easy contact.',textAlign: TextAlign.center,
                             style: TextStyle(color: Colors.white),
                           ),
                         ),
@@ -389,6 +389,7 @@ class _SellPageState extends State<SellPage> {
         labelText: label,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
+
         ),
       ),
       keyboardType: keyboardType,

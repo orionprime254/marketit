@@ -80,156 +80,158 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 25.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // const Icon(
-                  //   Icons.lock,
-                  //   size: 100,
-                  // ),
-                  Lottie.asset('lib/animations/welcome.json'),
-                  const SizedBox(
-                    height: 50,
-                  ),
-                  Container(
-                      margin: const EdgeInsets.fromLTRB(25, 0, 25, 20),
-                      child: const Align(
-                          alignment: Alignment.topLeft,
-                          child: Text(
-                            "Welcome Back to "
-                            "MarketIt",
-                            style: TextStyle(
-                                fontSize: 30, fontWeight: FontWeight.w700),
-                          ))),
-                  Container(
-                      margin: const EdgeInsets.fromLTRB(25, 0, 25, 20),
-                      child: const Align(
-                          alignment: Alignment.topLeft,
-                          child: Text(
-                            'A Comrade\'s Shopping Choice',
-                            style: TextStyle(
-                              color: Colors.grey,
-                              fontWeight: FontWeight.w700,
+      body: SingleChildScrollView(
+        child: SafeArea(
+          child: Center(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // const Icon(
+                    //   Icons.lock,
+                    //   size: 100,
+                    // ),
+                    Lottie.asset('lib/animations/welcome.json'),
+                    const SizedBox(
+                      height: 50,
+                    ),
+                    Container(
+                        margin: const EdgeInsets.fromLTRB(25, 0, 25, 20),
+                        child: const Align(
+                            alignment: Alignment.topLeft,
+                            child: Text(
+                              "Welcome Back to "
+                              "MarketIt",
+                              style: TextStyle(
+                                  fontSize: 30, fontWeight: FontWeight.w700),
+                            ))),
+                    Container(
+                        margin: const EdgeInsets.fromLTRB(25, 0, 25, 20),
+                        child: const Align(
+                            alignment: Alignment.topLeft,
+                            child: Text(
+                              'A Comrade\'s Shopping Choice',
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ))),
+        
+                    MyTextField(
+                        controller: emailTextController,
+                        hintText: 'email@gmail.com',
+                        obscureText: false),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    MyTextField(
+                        controller: passwordTextController,
+                        hintText: 'password',
+                        obscureText: true),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) {
+                          return const ForgotPasswordPage();
+                        }));
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 25),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Text(
+                              'Forgot Password',
+        
                             ),
-                          ))),
-
-                  MyTextField(
-                      controller: emailTextController,
-                      hintText: 'email@gmail.com',
-                      obscureText: false),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  MyTextField(
-                      controller: passwordTextController,
-                      hintText: 'password',
-                      obscureText: true),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) {
-                        return const ForgotPasswordPage();
-                      }));
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 25),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    MyButton(
+                      onTap: signIn,
+                      text: 'Sign In',
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          Text(
-                            'Forgot Password',
-
+                          Expanded(
+                              child: Divider(
+                            thickness: 0.5,
+                            color: Colors.grey[400],
+                          )),
+                          Text('Or Continue with'),
+                          Expanded(
+                            child: Divider(
+                              thickness: 0.5,
+                              color: Colors.grey[400],
+                            ),
                           ),
                         ],
                       ),
                     ),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  MyButton(
-                    onTap: signIn,
-                    text: 'Sign In',
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                    child: Row(
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Expanded(
-                            child: Divider(
-                          thickness: 0.5,
-                          color: Colors.grey[400],
-                        )),
-                        Text('Or Continue with'),
-                        Expanded(
-                          child: Divider(
-                            thickness: 0.5,
-                            color: Colors.grey[400],
-                          ),
+                        GestureDetector(
+                          onTap: ()=>AuthService().signInWithGoogle(),
+                          child: Container(
+                              padding: EdgeInsets.all(20),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(16),
+                                  border: Border.all(color: Colors.white),
+                                  color: Colors.grey[200]
+                              ),
+                              child: Image.asset('lib/imgs/search.png',height: 40,)),
                         ),
+                        SizedBox(width: 15.0,),
+                        // Container(
+                        //     padding: EdgeInsets.all(20),
+                        //     decoration: BoxDecoration(
+                        //         borderRadius: BorderRadius.circular(16),
+                        //         border: Border.all(color: Colors.white),
+                        //         color: Colors.grey[200]
+                        //     ),
+                        //     child: Image.asset('lib/imgs/facebook.png',height: 40,)),
+        
                       ],
                     ),
-                  ),
-                  const SizedBox(
-                    height: 30,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      GestureDetector(
-                        onTap: ()=>AuthService().signInWithGoogle(),
-                        child: Container(
-                            padding: EdgeInsets.all(20),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(16),
-                                border: Border.all(color: Colors.white),
-                                color: Colors.grey[200]
-                            ),
-                            child: Image.asset('lib/imgs/search.png',height: 40,)),
-                      ),
-                      SizedBox(width: 15.0,),
-                      // Container(
-                      //     padding: EdgeInsets.all(20),
-                      //     decoration: BoxDecoration(
-                      //         borderRadius: BorderRadius.circular(16),
-                      //         border: Border.all(color: Colors.white),
-                      //         color: Colors.grey[200]
-                      //     ),
-                      //     child: Image.asset('lib/imgs/facebook.png',height: 40,)),
-
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 30,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        'Not a Member?',
-                      ),
-                      GestureDetector(
-                        onTap: widget.onTap,
-                        child: const Text(
-                          ' Register Now',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, color: Colors.blue),
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text(
+                          'Not a Member?',
                         ),
-                      )
-                    ],
-                  )
-                ],
+                        GestureDetector(
+                          onTap: widget.onTap,
+                          child: const Text(
+                            ' Register Now',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, color: Colors.blue),
+                          ),
+                        )
+                      ],
+                    )
+                  ],
+                ),
               ),
             ),
           ),

@@ -20,24 +20,27 @@ class UploadProgressPage extends StatelessWidget {
       ),
       body: Center(
         child: isSuccess
-            ? Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.check_circle, color: Colors.green, size: 100),
-            SizedBox(height: 20),
-            Text(
-              'Upload Successful!Please be patient as admin reviews your upload :)',
-              style: TextStyle(fontSize: 24),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context, true);
-              },
-              child: Text('Return to Previous Page'),
-            ),
-          ],
-        )
+            ? Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 25.0),
+              child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+              Icon(Icons.check_circle, color: Colors.green, size: 100),
+              SizedBox(height: 20),
+              Text(
+                'Upload Successful!Please be patient as admin reviews your upload :)',
+                style: TextStyle(fontSize: 24),
+              ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context, true);
+                },
+                child: Text('Return to Previous Page',style: TextStyle(color: Colors.green),textAlign: TextAlign.center,),
+              ),
+                        ],
+                      ),
+            )
             : errorMessage != null
             ? Column(
           mainAxisAlignment: MainAxisAlignment.center,

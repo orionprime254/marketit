@@ -85,140 +85,142 @@ class _DisplayPageState extends State<DisplayPage> with SingleTickerProviderStat
         //   ))
         // ],
       ),
-      body: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                widget.imageUrls.length > 1
-                    ? CarouselSlider(
-                  options: CarouselOptions(
-                    height: 500,
-                    autoPlay: true,
-                    enlargeCenterPage: true,
-
-                  ),
-                  items: widget.imageUrls.map((url) {
-                    return Builder(
-                      builder: (BuildContext context) {
-                        return Container(
-                          width: MediaQuery.of(context).size.width,
-                          margin: const EdgeInsets.symmetric(horizontal: 5.0),
-                          child: CachedNetworkImage(
-                            imageUrl: url,
-                            errorWidget: (context, url, error) =>
-                            const Icon(Icons.error),
-                            fit: BoxFit.contain,
-                          ),
-                        );
-                      },
-                    );
-                  }).toList(),
-                )
-                    : Container(
-                  width: MediaQuery.of(context).size.width,
-                  margin: const EdgeInsets.symmetric(horizontal: 5.0),
-                  child: CachedNetworkImage(
-                    imageUrl: widget.imageUrls.first,
-                    errorWidget: (context, url, error) =>
-                    const Icon(Icons.error),
-                    height: 500,
-                    fit: BoxFit.contain,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 20.0),
-                      child: Text(
-                        widget.name,
-                        style: const TextStyle(
-                            fontSize: 22, fontWeight: FontWeight.bold),
-                      ),
+      body: SingleChildScrollView(
+        child: SafeArea(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  widget.imageUrls.length > 1
+                      ? CarouselSlider(
+                    options: CarouselOptions(
+                      height: 500,
+                      autoPlay: true,
+                      enlargeCenterPage: true,
+        
                     ),
-
-                  ],
-                ),
-                SizedBox(height: 10,),
-                Padding(
-                  padding: const EdgeInsets.only(left: 20.0),
-                  child: Text(
-                    'Ksh ' + widget.price.toString(),
-                    style: TextStyle(
-                        //color: Colors.grey[100],
-                        fontWeight: FontWeight.w400,
-                        fontSize: 15),
-                  ),
-                ),
-
-                const SizedBox(height: 10),
-                Padding(
-                  padding: const EdgeInsets.all(25.0),
-                  child: Text(
-                    widget.description,
-                    style: const TextStyle(fontSize: 16),
-                    textAlign: TextAlign.justify,
-                  ),
-                ),
-              ],
-            ),
-          SizedBox(height: 20,),
-          //  Divider(color: Colors.grey,),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 20.0),
-                  child: GestureDetector(
-                    onTap: (() async {
-                      if (phoneNumber != null) {
-                        await launchUrl(phoneNumber!);
-                      }
-                    }),
-                    child: Container(
-                      width: MediaQuery.of(context).size.width / 1.5,
-                      height: 60,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: Colors.grey),
-                          //color: Colors.grey[200]
-                      ),
-                      child: Center(
-                        child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Lottie.asset('lib/animations/call.json'),
-                            Text(
-                              whatsappNumber ?? 'Loading...',
-                              style: const TextStyle(
-                                  fontSize: 22,
-                                  //color: Colors.black,
-                                  ),
+                    items: widget.imageUrls.map((url) {
+                      return Builder(
+                        builder: (BuildContext context) {
+                          return Container(
+                            width: MediaQuery.of(context).size.width,
+                            margin: const EdgeInsets.symmetric(horizontal: 5.0),
+                            child: CachedNetworkImage(
+                              imageUrl: url,
+                              errorWidget: (context, url, error) =>
+                              const Icon(Icons.error),
+                              fit: BoxFit.contain,
                             ),
-                          ],
+                          );
+                        },
+                      );
+                    }).toList(),
+                  )
+                      : Container(
+                    width: MediaQuery.of(context).size.width,
+                    margin: const EdgeInsets.symmetric(horizontal: 5.0),
+                    child: CachedNetworkImage(
+                      imageUrl: widget.imageUrls.first,
+                      errorWidget: (context, url, error) =>
+                      const Icon(Icons.error),
+                      height: 500,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 20.0),
+                        child: Text(
+                          widget.name,
+                          style: const TextStyle(
+                              fontSize: 22, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+        
+                    ],
+                  ),
+                  SizedBox(height: 10,),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 20.0),
+                    child: Text(
+                      'Ksh ' + widget.price.toString(),
+                      style: TextStyle(
+                          //color: Colors.grey[100],
+                          fontWeight: FontWeight.w400,
+                          fontSize: 15),
+                    ),
+                  ),
+        
+                  const SizedBox(height: 10),
+                  Padding(
+                    padding: const EdgeInsets.all(25.0),
+                    child: Text(
+                      widget.description,
+                      style: const TextStyle(fontSize: 16),
+                      textAlign: TextAlign.justify,
+                    ),
+                  ),
+                ],
+              ),
+            SizedBox(height: 20,),
+            //  Divider(color: Colors.grey,),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 20.0),
+                    child: GestureDetector(
+                      onTap: (() async {
+                        if (phoneNumber != null) {
+                          await launchUrl(phoneNumber!);
+                        }
+                      }),
+                      child: Container(
+                        width: MediaQuery.of(context).size.width / 1.5,
+                        height: 60,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(color: Colors.grey),
+                            //color: Colors.grey[200]
+                        ),
+                        child: Center(
+                          child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Lottie.asset('lib/animations/call.json'),
+                              Text(
+                                whatsappNumber ?? 'Loading...',
+                                style: const TextStyle(
+                                    fontSize: 22,
+                                    //color: Colors.black,
+                                    ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-                GestureDetector(
-                  onTap: (() async {
-                    if (whatsapp != null) {
-                      await launchUrl(whatsapp!);
-                    }
-                  }),
-                  child: Container(
-                      width: MediaQuery.of(context).size.width / 5,
-                      height: 60,
-                      child: Lottie.asset('lib/animations/whatsapp.json', height: 40)),
-                ),
-              ],
-            ),
-            SizedBox(height: 20,)
-          ],
+                  GestureDetector(
+                    onTap: (() async {
+                      if (whatsapp != null) {
+                        await launchUrl(whatsapp!);
+                      }
+                    }),
+                    child: Container(
+                        width: MediaQuery.of(context).size.width / 5,
+                        height: 60,
+                        child: Lottie.asset('lib/animations/whatsapp.json', height: 40)),
+                  ),
+                ],
+              ),
+              SizedBox(height: 20,)
+            ],
+          ),
         ),
       ),
     );
