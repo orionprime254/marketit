@@ -6,7 +6,7 @@ class CustomRewardAd {
 
   void loadRewardedAd() {
     RewardedAd.load(
-      adUnitId: 'YOUR_AD_UNIT_ID',
+      adUnitId: 'ca-app-pub-3940256099942544/5224354917',
       request: AdRequest(),
       rewardedAdLoadCallback: RewardedAdLoadCallback(
         onAdLoaded: (RewardedAd ad) {
@@ -15,7 +15,11 @@ class CustomRewardAd {
           print('Rewarded Ad loaded');
         },
         onAdFailedToLoad: (LoadAdError error) {
-          print('Rewarded Ad failed to load: $error');
+          print('Rewarded Ad failed to load: ${error.message}');
+          _isAdLoaded = false;
+          Future.delayed(Duration(seconds: 30), () {
+            loadRewardedAd(); // Retry after a delay
+          });
         },
       ),
     );
@@ -25,13 +29,33 @@ class CustomRewardAd {
     return _isAdLoaded;
   }
 
-  void showRewardedAd() {
+  void showRewardedAd({required Function(dynamic) onAdDismissed}) {
     if (_rewardedAd != null) {
-      _rewardedAd!.show(onUserEarnedReward: (AdWithoutView ad, RewardItem reward) {
-        print('User earned reward: ${reward.amount} ${reward.type}');
-      });
+      _rewardedAd!.show(
+        onUserEarnedReward: (AdWithoutView ad, RewardItem reward) {
+          print('User earned reward: ${reward.amount} ${reward.type}');
+        },
+      );
       _rewardedAd = null;
       _isAdLoaded = false;
+      _rewardedAd?.fullScreenContentCallback = FullScreenContentCallback(
+        onAdShowedFullScreenContent: (RewardedAd ad) {},
+        onAdFailedToShowFullScreenContent: (RewardedAd ad, AdError error) {
+          ad.dispose();
+          loadRewardedAd(); // Reload the ad on failure
+        },
+        onAdDismissedFullScreenContent: (RewardedAd ad) {
+          ad.dispose();
+          onAdDismissed(ad);
+        },
+        onAdImpression: (RewardedAd ad) => print('$ad impression occurred'),
+      );
+    } else {
+      onAdDismissed(null);
     }
+  }
+
+  void dispose() {
+    _rewardedAd?.dispose();
   }
 }

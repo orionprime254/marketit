@@ -33,6 +33,7 @@ class _SellPageState extends State<SellPage> {
   String? _whatsappNumber;
   bool _isUploading = false;
   double _uploadProgress = 0;
+  bool _isRewardedAdReady = false;
 
   CustomBannerAd customBannerAd = CustomBannerAd();
   CustomRewardAd _rewardAd = CustomRewardAd();
@@ -42,6 +43,7 @@ class _SellPageState extends State<SellPage> {
     _titleController.dispose();
     _descriptionController.dispose();
     _priceController.dispose();
+
     super.dispose();
   }
   // Define category-specific hints
@@ -65,7 +67,7 @@ class _SellPageState extends State<SellPage> {
   void initState() {
     super.initState();
     _getUserWhatsappNumber();
-    _rewardAd.loadRewardedAd();
+
     _requestLocationPermission();
   }
   Future<void> _requestLocationPermission() async {
@@ -185,7 +187,7 @@ class _SellPageState extends State<SellPage> {
       List<Placemark> placemarks = await placemarkFromCoordinates(position.latitude, position.longitude);
       String county = placemarks[0].locality ?? 'Unknown';
 
-
+      //Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
 
       await _pendingitems.add({
         "Title": title,
@@ -263,7 +265,10 @@ class _SellPageState extends State<SellPage> {
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
+
           children: [
+            CustomBannerAd(),
+            SizedBox(height: 10,),
             Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -353,7 +358,7 @@ class _SellPageState extends State<SellPage> {
                 ),
               ],
             ),
-            const CustomBannerAd()
+          //  const CustomBannerAd()
           ],
         ),
       ),
@@ -368,6 +373,7 @@ class _SellPageState extends State<SellPage> {
       decoration: InputDecoration(
         labelText: label,
         border: OutlineInputBorder(
+
           borderRadius: BorderRadius.circular(10),
         ),
       ),

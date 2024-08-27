@@ -28,7 +28,8 @@ class _PendingApprovePageState extends State<PendingApprovePage> {
 
     return Scaffold(
       appBar: AppBar(title: Text('Pending Approvals')),
-      body: StreamBuilder<QuerySnapshot>(
+      body: 
+      StreamBuilder<QuerySnapshot>(
         stream: _pendingItems.where('userId', isEqualTo: user.email).where('isApproved', isEqualTo: false).snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
@@ -61,6 +62,7 @@ class _PendingApprovePageState extends State<PendingApprovePage> {
                   );
                 },
                 child: Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 5),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                     color: Theme.of(context).colorScheme.primary,

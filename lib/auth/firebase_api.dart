@@ -9,6 +9,7 @@ class FirebaseApi {
   Future<void> initNotifications() async {
     //request permissio from user(will prompt)
     await _firebaseMessaging.requestPermission();
+    await _firebaseMessaging.subscribeToTopic('admin_notifications');
     //fetch the FCM token for this device
     final fCMToken = await _firebaseMessaging.getToken();
     //print token(normally youd send it to your server
@@ -33,5 +34,16 @@ class FirebaseApi {
 
     //attach event listeners fpr when a notification opens the app
     FirebaseMessaging.onMessageOpenedApp.listen(handleMessage);
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      print('Message received: ${message.notification?.title}');
+      // Handle foreground notifications here
+    });
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      print('Message clicked: ${message.notification?.title}');
+      // Handle notification tap here
+    });
   }
-}
+  }
+
+

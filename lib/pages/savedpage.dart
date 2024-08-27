@@ -10,7 +10,8 @@ class SavedPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
-        title: const Text('Saved Items'),
+        centerTitle: true,
+        title: const Text('S A V E D'),
       ),
       body: Consumer<ItemProvider>(
         builder: (context, itemProvider, child) {

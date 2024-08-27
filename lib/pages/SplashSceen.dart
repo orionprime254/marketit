@@ -16,7 +16,7 @@ class _SplashScreenState extends State<SplashScreen> {
     // TODO: implement initState
     super.initState();
     appOpenAdManager.loadAd();
-    Future.delayed(const Duration(milliseconds: 5000)).then((value) {
+    Future.delayed(const Duration(milliseconds: 2000)).then((value) {
       appOpenAdManager.showAdIfAvailable();
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>const AuthPage()));
     });

@@ -1,8 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:marketit/pages/homepage.dart';
 
+import '../ads/custom_banner.dart';
 import '../cards/goods.dart';
 import '../cards/goodtile.dart';
 import 'displaypage.dart';
@@ -14,18 +18,67 @@ class RentalsPage extends StatefulWidget {
   State<RentalsPage> createState() => _RentalsPageState();
 }
 
-late Stream<QuerySnapshot> _stream;
+ Stream<QuerySnapshot>? _stream;
 
-class _RentalsPageState extends State<RentalsPage> {
+class _RentalsPageState extends State<RentalsPage> with WidgetsBindingObserver{
+  String _locality = 'Loading...';
+  bool isPaused = false;
+
+  get appOpenAdManager => null;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    _initStream();
 
-    _stream = FirebaseFirestore.instance
-        .collection('uploads')
-        .where('Category', isEqualTo: 'Rentals')
-        .snapshots();
+  }
+  Future<void> _initStream()async{
+    String locality = await getUserLocality();
+    setState(() {
+      _locality = locality;
+      _stream = FirebaseFirestore.instance
+          .collection('uploads')
+          .where('Category', isEqualTo: 'Rentals')
+          .where('county', isEqualTo: _locality)
+          .snapshots();
+    });
+  }
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.paused) {
+      isPaused = true;
+    }
+    if (state == AppLifecycleState.resumed && isPaused) {
+      print('resumed=============');
+      appOpenAdManager.showAdIfAvailable();
+      isPaused = false;
+    }
+  }
+  Future<void> _updateLocality() async {
+    String locality = await getUserLocality();
+    setState(() {
+      _locality = locality;
+      // _stream = FirebaseFirestore.instance.collection('uploads').where('county',isEqualTo: _locality).snapshots();
+      print('...........................Querying for locality: $_locality');
+    });
+  }
+  Future<String> getUserLocality() async {
+    try {
+      await Geolocator.requestPermission();
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
+      if (placemarks.isNotEmpty) {
+        return placemarks[0].locality ?? 'Unknown locality';
+      }
+    } catch (e) {
+      print('Error getting location: $e');
+    }
+    return 'Unknown locality';
   }
 
   @override
@@ -36,32 +89,36 @@ class _RentalsPageState extends State<RentalsPage> {
           centerTitle:true,
           title: const Text('R E N T A L H O U S E S'),
         ),
-        body: StreamBuilder<QuerySnapshot>(
-            stream: _stream,
-            builder: (BuildContext context, AsyncSnapshot snapshot) {
-              if (snapshot.hasError) {
-                return Center(
-                  child: Text("Some error occured ${snapshot.error}"),
-                );
-              }
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-              QuerySnapshot querySnapshot = snapshot.data!;
-              List<QueryDocumentSnapshot> documents = querySnapshot.docs;
-              List<Map> itemsFromFirestore =
-              documents.map((e) => e.data() as Map).toList();
-              // final containsBed = snapshot.data!.docs.any((doc) => (doc['Category'] as String).toLowerCase().contains("Bed"));
-              //   if (containsBed){
-              if (documents.isEmpty) {
-                return const Center(child: Text("No rentals available"));
-              }
-              return SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      GridView.builder(
+        body: Stack(
+          children:[SingleChildScrollView(
+            child: Column(
+              children: [
+                StreamBuilder<QuerySnapshot>(
+                    stream: _stream,
+                    builder: (BuildContext context, AsyncSnapshot snapshot) {
+                      if (snapshot.hasError) {
+                        return Center(
+                          child: Text("Some error occured ${snapshot.error}"),
+                        );
+                      }
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      } if (!snapshot.hasData || snapshot.data == null || snapshot.data!.docs.isEmpty) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+
+                      QuerySnapshot querySnapshot = snapshot.data!;
+                      List<QueryDocumentSnapshot> documents = querySnapshot.docs;
+                      List<Map> itemsFromFirestore =
+                      documents.map((e) => e.data() as Map).toList();
+                      // final containsBed = snapshot.data!.docs.any((doc) => (doc['Category'] as String).toLowerCase().contains("Bed"));
+                      //   if (containsBed){
+                      if (documents.isEmpty) {
+                        return const Center(child: Text("No rentals available"));
+                      }
+                      return GridView.builder(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         itemCount: itemsFromFirestore.length,
@@ -95,9 +152,20 @@ class _RentalsPageState extends State<RentalsPage> {
                               )
                           );
                         },
-                      )
-                    ],
-                  ));
-            }));
+                      );
+                    }),
+              ],
+            ),
+          ),Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              height: 50, // Adjust height as needed
+              color: Colors.transparent, // Or any color to fit your design
+              child: CustomBannerAd(), // Your custom banner ad widget
+            ),
+          ),]
+        ));
   }
 }

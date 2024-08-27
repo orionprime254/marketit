@@ -1,17 +1,17 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:marketit/ads/custom_banner.dart';
 import 'package:marketit/ads/openad.dart';
-import 'package:marketit/pages/profilepage.dart';
+import 'package:marketit/pages/Clothes.dart';
 import 'package:marketit/pages/rental_house.dart';
-import 'package:marketit/pages/savedpage.dart';
 import 'package:provider/provider.dart';
+import '../ads/custom_banner.dart';
 import '../ads/nativead.dart';
 import '../cards/objectcard.dart';
-import '../components/cupertinoswitch.dart';
 import '../components/item_model.dart';
 import '../components/item_provider.dart';
 import 'Bed.dart';
@@ -24,7 +24,6 @@ import 'Services.dart';
 import 'Stereo.dart';
 import 'TVs.dart';
 import 'displaypage.dart';
-import 'mydrawer.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -34,22 +33,20 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
-  final TextEditingController _searchController = TextEditingController();
-  String _searchQuery = '';
+  String _locality = 'Loading...';
   bool isLiked = false;
   var myContr = Get.put(NativeController());
-  late Stream<QuerySnapshot> _stream;
+   Stream<QuerySnapshot>? _stream;
   AppOpenAdManager appOpenAdManager = AppOpenAdManager();
   bool isPaused = false;
+
 
   @override
   void dispose() {
     // TODO: implement dispose
     super.dispose();
-    WidgetsBinding.instance!.removeObserver(this);
+    WidgetsBinding.instance.removeObserver(this);
   }
-
-  @override
   voiddidChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
     if (state == AppLifecycleState.paused) {
@@ -61,38 +58,61 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       isPaused = false;
     }
   }
+  Future<void> _updateLocality() async {
+    String locality = await getUserLocality();
+    setState(() {
+      _locality = locality;
+      _stream = FirebaseFirestore.instance.collection('uploads').where('county',isEqualTo: _locality).snapshots();
+      print('...........................Querying for locality: $_locality');
+    });
+  }
+  Future<String> getUserLocality() async {
+    try {
+      await Geolocator.requestPermission();
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
+      if (placemarks.isNotEmpty) {
+        return placemarks[0].locality ?? 'Unknown locality';
+      }
+    } catch (e) {
+      print('Error getting location: $e');
+    }
+    return 'Unknown locality';
+  }
 
   @override
   void initState() {
     super.initState();
+    _updateLocality();
     myContr.loadAd();
+
     appOpenAdManager.loadAd();
-    WidgetsBinding.instance!.addObserver(this);
-    _stream = FirebaseFirestore.instance.collection('uploads').snapshots();
-    _searchController.addListener(() {
-      setState(() {
-        _searchQuery = _searchController.text;
-      });
-    });
+    WidgetsBinding.instance.addObserver(this);
+    _stream = FirebaseFirestore.instance.collection('uploads').where('county',isEqualTo: _locality).snapshots();
+
+
   }
 
-  Stream<QuerySnapshot> _performSearch(String query) {
-    if (query.isEmpty) {
-      return FirebaseFirestore.instance.collection('uploads').snapshots();
-    } else {
-      return FirebaseFirestore.instance
-          .collection('uploads')
-          .where('Title', isGreaterThanOrEqualTo: query)
-          .where('Title', isLessThanOrEqualTo: query + '\uf8ff')
-          .snapshots();
-    }
-  }
+
+
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 20.0),
+            child: Text(_locality),
+          )
+        ],
         // leading: CupertinoSwitcher(),
         elevation: 2,
         centerTitle: true,
@@ -176,6 +196,24 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                     },
                   ),
                   ProductTile(
+                    productName: 'Phones',
+                    imagePath: 'lib/imgs/mobile-app.png',
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const PhonesPage()),
+                      );
+                    },
+                  ),
+                  ProductTile(productName: 'Clothing', imagePath: 'lib/imgs/fashion.png', onTap:  () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const ClothesPage()),
+                    );
+                  },),
+                  ProductTile(
                     productName: 'Services',
                     imagePath: 'lib/imgs/air-mattress.png',
                     onTap: () {
@@ -197,17 +235,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                       );
                     },
                   ),
-                  ProductTile(
-                    productName: 'Phones',
-                    imagePath: 'lib/imgs/mobile-app.png',
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const PhonesPage()),
-                      );
-                    },
-                  ),
+
                   ProductTile(
                     productName: 'Rent/Hostel',
                     imagePath: "lib/imgs/home.png",
@@ -267,8 +295,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
               ),
             ),
             const SizedBox(height: 6),
+          //  _userPosition== null? const Center(child: CircularProgressIndicator(),):_filteredItems.isEmpty? const Center(child: Text('No items found in your area.')):
             StreamBuilder<QuerySnapshot>(
-              stream: _performSearch(_searchQuery),
+              stream: _stream,
               builder: (BuildContext context, AsyncSnapshot snapshot) {
                 if (snapshot.hasError) {
                   return Center(
@@ -277,103 +306,33 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                 }
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(
-                    child: CircularProgressIndicator(),
+                    child: CupertinoActivityIndicator(),
                   );
-                }
+                }else const Center(
+                  child: const Center(
+                    child: CupertinoActivityIndicator(),
+                  ),
+                );
                 QuerySnapshot querySnapshot = snapshot.data!;
                 List<QueryDocumentSnapshot> documents = querySnapshot.docs;
                 List<Map> itemsFromFirestore =
                     documents.map((e) => e.data() as Map).toList();
-
                 return GridView.builder(
-                  itemCount: itemsFromFirestore.length +
-                      (itemsFromFirestore.length ~/ 5),
-                  // Adjust the item count
+                  itemCount: itemsFromFirestore.length,
                   physics: const NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
                   padding: const EdgeInsets.all(10.0),
+                  // Padding to avoid bottom navigation bar blocking
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
                     mainAxisSpacing: 10,
                     childAspectRatio: 0.75,
                   ),
                   itemBuilder: (BuildContext context, int index) {
-                    // Determine the actual index for items
-                    int actualIndex = index - (index ~/ 5);
-
-                    // Display the ad every 5th item
-                    if (index % 5 == 4) {
-                      return Obx(() {
-                        if (myContr.isAdLoaded.value &&
-                            myContr.nativeAd != null) {
-                          return Container(
-                            margin: EdgeInsets.symmetric(horizontal: 5),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Theme.of(context).colorScheme.primary,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.5),
-                                  blurRadius: 4,
-                                  offset: Offset(0, 4),
-                                ),
-                              ],
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.vertical(
-                                      top: Radius.circular(12),
-                                    ),
-                                    child: Container(
-                                      height: 155,
-                                      width: double.infinity,
-                                      child: AdWidget(ad: myContr.nativeAd!),
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.all(8.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "Sponsored Ad",
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16,
-                                        ),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                      SizedBox(height: 4),
-                                      Text(
-                                        "This is a sponsored advertisement.",
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            color: Colors.grey[700],
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        } else {
-                          return SizedBox(); // Return an empty widget or placeholder
-                        }
-                      });
-                    }
-
-                    // Handle the actual items
-                    Map thisItem = itemsFromFirestore[actualIndex];
-                    String itemId = documents[actualIndex].id;
+                    Map thisItem = itemsFromFirestore[index];
+                    String itemId = documents[index].id;
                     List<String> imageUrls =
-                        List<String>.from(thisItem['images']);
+                    List<String>.from(thisItem['images']);
                     return GestureDetector(
                       onTap: () {
                         Navigator.push(
@@ -390,13 +349,126 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                         );
                       },
                       child: ProductContainer(
-                        imageUrls: imageUrls,
-                        thisItem: thisItem,
-                        itemId: itemId,
-                      ),
+                          imageUrls: imageUrls,
+                          thisItem: thisItem,
+                          itemId: itemId),
                     );
                   },
                 );
+             //    return GridView.builder(
+             //
+             //
+             // //     itemCount: itemsFromFirestore.length +
+             // //         (itemsFromFirestore.length ~/ 5),
+             //      // Adjust the item count
+             //      physics: const NeverScrollableScrollPhysics(),
+             //      shrinkWrap: true,
+             //      padding: const EdgeInsets.all(10.0),
+             //      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+             //        crossAxisCount: 2,
+             //        mainAxisSpacing: 10,
+             //        childAspectRatio: 0.75,
+             //      ),
+             //      itemBuilder: (BuildContext context, int index) {
+             //        // Determine the actual index for items
+             //        int actualIndex = index - (index ~/ 5);
+             //
+             //        // Display the ad every 5th item
+             //        if (index % 5 == 4) {
+             //          return Obx(() {
+             //            if (myContr.isAdLoaded.value &&
+             //                myContr.nativeAd != null) {
+             //              return Container(
+             //                margin: EdgeInsets.symmetric(horizontal: 5),
+             //                decoration: BoxDecoration(
+             //                  borderRadius: BorderRadius.circular(10),
+             //                  color: Theme.of(context).colorScheme.primary,
+             //                  boxShadow: [
+             //                    BoxShadow(
+             //                      color: Colors.black.withOpacity(0.5),
+             //                      blurRadius: 4,
+             //                      offset: Offset(0, 4),
+             //                    ),
+             //                  ],
+             //                ),
+             //                child: Column(
+             //                  crossAxisAlignment: CrossAxisAlignment.start,
+             //                  children: [
+             //                    Expanded(
+             //                      child: ClipRRect(
+             //                        borderRadius: BorderRadius.vertical(
+             //                          top: Radius.circular(12),
+             //                        ),
+             //                        child: Container(
+             //                          height: 155,
+             //                          width: double.infinity,
+             //                          child: AdWidget(ad: myContr.nativeAd!),
+             //                        ),
+             //                      ),
+             //                    ),
+             //                    Padding(
+             //                      padding: EdgeInsets.all(8.0),
+             //                      child: Column(
+             //                        crossAxisAlignment:
+             //                            CrossAxisAlignment.start,
+             //                        children: [
+             //                          Text(
+             //                            "Sponsored Ad",
+             //                            style: TextStyle(
+             //                              fontWeight: FontWeight.bold,
+             //                              fontSize: 16,
+             //                            ),
+             //                            maxLines: 1,
+             //                            overflow: TextOverflow.ellipsis,
+             //                          ),
+             //                          SizedBox(height: 4),
+             //                          Text(
+             //                            "This is a sponsored advertisement.",
+             //                            style: TextStyle(
+             //                                fontSize: 14,
+             //                                color: Colors.grey[700],
+             //                                fontWeight: FontWeight.bold),
+             //                          ),
+             //                        ],
+             //                      ),
+             //                    ),
+             //                  ],
+             //                ),
+             //              );
+             //            } else {
+             //              return SizedBox(); // Return an empty widget or placeholder
+             //            }
+             //          });
+             //        }
+             //
+             //        // Handle the actual items
+             //        Map thisItem = itemsFromFirestore[actualIndex];
+             //        String itemId = documents[actualIndex].id;
+             //        List<String> imageUrls =
+             //            List<String>.from(thisItem['images']);
+             //        return GestureDetector(
+             //          onTap: () {
+             //            Navigator.push(
+             //              context,
+             //              MaterialPageRoute(
+             //                builder: (context) => DisplayPage(
+             //                  imageUrls: imageUrls,
+             //                  name: thisItem['Title'],
+             //                  price: thisItem['Price'].toString(),
+             //                  description: thisItem['Description'],
+             //                  userEmail: thisItem['userId'],
+             //                ),
+             //              ),
+             //            );
+             //          },
+             //          child: ProductContainer(
+             //            imageUrls: imageUrls,
+             //            thisItem: thisItem,
+             //            itemId: itemId,
+             //          ),
+             //        );
+             //      },
+             //    );
               },
             ),
           ],

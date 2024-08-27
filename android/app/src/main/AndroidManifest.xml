@@ -44,6 +44,12 @@
        <meta-data
            android:value="ca-app-pub-8165707305750871~8811735376"
            android:name="com.google.android.gms.ads.APPLICATION_ID"/>
+       <meta-data
+           android:name="com.google.android.gms.ads.flag.OPTIMIZE_INITIALIZATION"
+           android:value="true"/>
+       <meta-data
+           android:name="com.google.android.gms. ads.flag.OPTIMIZE_AD_LOADING"
+           android:value="true"/>
        android:usesCleartextTraffic="true"
     </application>
 </manifest>

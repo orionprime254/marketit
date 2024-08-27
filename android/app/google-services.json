@@ -30,6 +30,14 @@
           }
         },
         {
+          "client_id": "865180060034-nlgrafivqo3j3cubea11ago6hkfq5r7f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.marketit",
+            "certificate_hash": "89441e15f00bafd1d23efa0b46005eed09dbbe24"
+          }
+        },
+        {
           "client_id": "865180060034-30b9mn07vcsa95gkajjc42msb1t38i37.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -55,7 +63,8 @@
             }
           ]
         }
-      }
+      },
+      "admob_app_id": "ca-app-pub-8165707305750871~8811735376"
     }
   ],
   "configuration_version": "1"

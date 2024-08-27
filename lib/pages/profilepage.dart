@@ -173,175 +173,191 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
-        title: const Center(child: Text('P R O F I L E')),
+        title: Text('P R O F I L E'),
         centerTitle: true,
       ),
       drawer: const MyDrawer(),
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
-              future: getUserDetails(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(
-                    child: const Center(
-                      child: CupertinoActivityIndicator(),
-                    ),
-                  );
-                } else if (snapshot.hasError) {
-                  return Text("Error: ${snapshot.error}");
-                } else if (snapshot.hasData) {
-                  Map<String, dynamic>? user = snapshot.data!.data();
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              currentUser!.email!, // Check for nullability
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            // MyTextBox(
-                            //   text: user?["username"] ?? '',
-                            //   sectionName: 'username',
-                            //   onPressed: () => editField('username'),
-                            // ),
-                            const SizedBox(height: 10),
-                            MyTextBox(
-                              text: user?['whatsapp'] ?? '',
-                              sectionName: 'Whatsapp Phone Number',
-                              onPressed: () => editField('whatsapp'),
-                            ),
-                          ],
-                        ),
+      body: Stack(
+        children:[ SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              SizedBox(height: 50,),
+              FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+                future: getUserDetails(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: const Center(
+                        child: CupertinoActivityIndicator(),
                       ),
-                      StreamBuilder<QuerySnapshot>(
-                        stream: FirebaseFirestore.instance
-                            .collection("uploads")
-                            .where("userId", isEqualTo: currentUser!.email)
-                            .snapshots(),
-                        builder: (BuildContext context,
-                            AsyncSnapshot<QuerySnapshot> snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const Center(
-                                child: CircularProgressIndicator());
-                          } else if (snapshot.hasError) {
-                            return Text("Error: ${snapshot.error}");
-                          } else {
-                            return GridView.builder(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemCount: snapshot.data!.docs.length,
-                              gridDelegate:
-                                  const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 3,
-                                crossAxisSpacing: 2,
-                                mainAxisSpacing: 2,
-                                mainAxisExtent: 200,
+                    );
+                  } else if (snapshot.hasError) {
+                    return Text("Error: ${snapshot.error}");
+                  } else if (snapshot.hasData) {
+                    Map<String, dynamic>? user = snapshot.data!.data();
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                currentUser!.email!, // Check for nullability
+                                style:
+                                const TextStyle(fontWeight: FontWeight.bold),
                               ),
-                              itemBuilder: (BuildContext context, int index) {
-                                Map<String, dynamic> item =
-                                    snapshot.data!.docs[index].data()
-                                        as Map<String, dynamic>;
-                                String postId = snapshot.data!.docs[index].id;
-                                List<String> imageUrls = item['images'] != null
-                                    ? List<String>.from(item['images'])
-                                    : [];
-                                String firstImage = imageUrls.isNotEmpty
-                                    ? imageUrls.first
-                                    : 'https://via.placeholder.com/150';
-                                return GestureDetector(
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => DisplayPage(
-                                          imageUrls: imageUrls,
-                                          name: item['Title'] ?? 'No Title',
-                                          price: item['Price']?.toString() ??
-                                              'No Price',
-                                          description: item['Description'] ??
-                                              'No Description',
-                                          userEmail: item['userId'] ?? '',
+                              // MyTextBox(
+                              //   text: user?["username"] ?? '',
+                              //   sectionName: 'username',
+                              //   onPressed: () => editField('username'),
+                              // ),
+                              const SizedBox(height: 10),
+                              MyTextBox(
+                                text: user?['whatsapp'] ?? '',
+                                sectionName: 'Whatsapp Phone Number',
+                                onPressed: () => editField('whatsapp'),
+                              ),
+                            ],
+                          ),
+                        ),
+                        StreamBuilder<QuerySnapshot>(
+                          stream: FirebaseFirestore.instance
+                              .collection("uploads")
+                              .where("userId", isEqualTo: currentUser!.email)
+                              .snapshots(),
+                          builder: (BuildContext context,
+                              AsyncSnapshot<QuerySnapshot> snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                  child: CircularProgressIndicator());
+                            } else if (snapshot.hasError) {
+                              return Text("Error: ${snapshot.error}");
+                            } else {
+                              return GridView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: snapshot.data!.docs.length,
+                                gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 3,
+                                  // crossAxisSpacing: 10,
+                                  mainAxisSpacing: 10,
+                                  mainAxisExtent: 200,
+
+                                ),
+                                itemBuilder: (BuildContext context, int index) {
+                                  Map<String, dynamic> item =
+                                  snapshot.data!.docs[index].data()
+                                  as Map<String, dynamic>;
+                                  String postId = snapshot.data!.docs[index].id;
+                                  List<String> imageUrls = item['images'] != null
+                                      ? List<String>.from(item['images'])
+                                      : [];
+                                  String firstImage = imageUrls.isNotEmpty
+                                      ? imageUrls.first
+                                      : 'https://via.placeholder.com/150';
+                                  return GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => DisplayPage(
+                                            imageUrls: imageUrls,
+                                            name: item['Title'] ?? 'No Title',
+                                            price: item['Price']?.toString() ??
+                                                'No Price',
+                                            description: item['Description'] ??
+                                                'No Description',
+                                            userEmail: item['userId'] ?? '',
+                                          ),
                                         ),
+                                      );
+                                    },
+                                    child: Container(
+                                      margin: const EdgeInsets.symmetric(horizontal: 5),
+                                      decoration: BoxDecoration(
+                                        border: Border.all(color: Colors.grey),
+                                        borderRadius: BorderRadius.circular(10),
                                       ),
-                                    );
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: Colors.grey),
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: Column(
-                                      crossAxisAlignment:
+                                      child: SingleChildScrollView(
+                                        child: Column(
+                                          crossAxisAlignment:
                                           CrossAxisAlignment.start,
-                                      children: [
-                                        ClipRRect(
-                                          borderRadius: const BorderRadius.vertical(
-                                            top: Radius.circular(10),
-                                          ),
-                                          child: CachedNetworkImage(
-
-                                            height: 100,
-                                            width: double.infinity,
-                                            fit: BoxFit.cover, imageUrl: imageUrls.first,
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                item['Title'] ?? 'No Title',
-                                                style: const TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.bold),
+                                          children: [
+                                            ClipRRect(
+                                              borderRadius: const BorderRadius.vertical(
+                                                top: Radius.circular(10),
                                               ),
-                                              Text(
-                                                  'Ksh  ${item['Price'] ?? 'No Price'}'),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.end,
-                                                children: [
-                                                  DeleteButton(
+                                              child: CachedNetworkImage(
 
-                                                    onTap: () =>
-                                                        deletePost(postId),
+                                                height: 100,
+                                                width: double.infinity,
+                                                fit: BoxFit.cover, imageUrl: imageUrls.first,
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.all(8.0),
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    item['Title'] ?? 'No Title',
+                                                    style: const TextStyle(
+                                                        fontWeight:
+                                                        FontWeight.bold),
+                                                  ),
+                                                  Text(
+                                                      'Ksh  ${item['Price'] ?? 'No Price'}'),
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                    MainAxisAlignment.end,
+                                                    children: [
+                                                      DeleteButton(
+
+                                                        onTap: () =>
+                                                            deletePost(postId),
+                                                      )
+                                                    ],
                                                   )
                                                 ],
-                                              )
-                                            ],
-                                          ),
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                      ],
+                                      ),
                                     ),
-                                  ),
-                                );
-                              },
-                            );
-                          }
-                        },
-                      ),
-                    ],
-                  );
-                } else {
-                  return const Text('No Data');
-                }
-              },
-            ),
-            //Spacer(),
-            // CustomBannerAd()
-          ],
-        ),
+                                  );
+                                },
+                              );
+                            }
+                          },
+                        ),
+                      ],
+                    );
+                  } else {
+                    return const Text('No Data');
+                  }
+                },
+              ),
+              //Spacer(),
+              // CustomBannerAd()
+            ],
+          ),
+        ),Positioned(
+          top: 0,
+          left: 0,
+          right: 0,
+          child: Container(
+            height: 50, // Adjust height as needed
+            color: Colors.transparent, // Or any color to fit your design
+            child: CustomBannerAd(), // Your custom banner ad widget
+          ),
+        ),]
       ),
     );
   }

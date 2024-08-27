@@ -44,6 +44,7 @@ class _RegisterPageState extends State<RegisterPage> {
           .doc(userCredential.user!.email)
           .set({
         'username': emailTextController.text.split('@')[0],
+       // 'isVerified':false;
 
       });
       if (this.mounted) Navigator.pop(context);
@@ -65,6 +66,7 @@ class _RegisterPageState extends State<RegisterPage> {
       await FirebaseFirestore.instance.collection("Users").doc(userCredential.user!.email).set(
           {'email':userCredential.user!.email,
             // 'upload_items':_items
+          'isVerified':false
           });
     }
   }
