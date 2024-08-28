@@ -1,0 +1,1 @@
+C:\Users\Brian Amatalo\StudioProjects\marketit\plugin\build\classes\kotlin\main\marketit\MarketitPlugin$apply$1$1.class;C:\Users\Brian Amatalo\StudioProjects\marketit\plugin\build\classes\kotlin\main\marketit\MarketitPlugin$apply$1.class;C:\Users\Brian Amatalo\StudioProjects\marketit\plugin\build\classes\kotlin\main\marketit\MarketitPlugin.class
